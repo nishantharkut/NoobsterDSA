@@ -16,6 +16,7 @@ interface DailyLogFormProps {
   onSave: (log: LogEntry) => void;
   templates?: TemplateData[];
   initialData?: Partial<LogEntry>;
+  zenMode?: boolean; // Added missing prop
 }
 
 export default function DailyLogForm({ 
@@ -23,7 +24,8 @@ export default function DailyLogForm({
   onOpenChange, 
   onSave,
   templates = [],
-  initialData = {}
+  initialData = {},
+  zenMode = false // Added default value
 }: DailyLogFormProps) {
   const [formData, setFormData] = useState<Partial<LogEntry>>({
     id: initialData.id || uuidv4(),
@@ -87,13 +89,13 @@ export default function DailyLogForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className={`${zenMode ? 'max-w-2xl' : 'max-w-3xl'} max-h-[90vh] overflow-y-auto`}>
         <DialogHeader>
-          <DialogTitle>Create New Progress Log</DialogTitle>
+          <DialogTitle>{zenMode ? 'New Entry' : 'Create New Progress Log'}</DialogTitle>
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-          {templates.length > 0 && (
+          {templates.length > 0 && !zenMode && (
             <div className="col-span-1 md:col-span-2">
               <Label htmlFor="template">Apply Template</Label>
               <Select onValueChange={handleApplyTemplate}>
@@ -140,6 +142,12 @@ export default function DailyLogForm({
                 <RadioGroupItem value="learning" id="learning" />
                 <Label htmlFor="learning">Learning</Label>
               </div>
+              {zenMode && (
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="mock_interview" id="mock_interview" />
+                  <Label htmlFor="mock_interview">Mock Interview</Label>
+                </div>
+              )}
             </RadioGroup>
           </div>
 
@@ -237,27 +245,57 @@ export default function DailyLogForm({
             />
           </div>
 
-          <div className="col-span-1 md:col-span-2 space-y-2">
-            <Label htmlFor="resources">Resources Used</Label>
-            <Textarea
-              id="resources"
-              value={formData.resources}
-              onChange={(e) => handleChange("resources", e.target.value)}
-              rows={2}
-              placeholder="Links to resources, videos, articles, etc."
-            />
-          </div>
+          {!zenMode && (
+            <>
+              <div className="col-span-1 md:col-span-2 space-y-2">
+                <Label htmlFor="resources">Resources Used</Label>
+                <Textarea
+                  id="resources"
+                  value={formData.resources}
+                  onChange={(e) => handleChange("resources", e.target.value)}
+                  rows={2}
+                  placeholder="Links to resources, videos, articles, etc."
+                />
+              </div>
 
-          <div className="col-span-1 md:col-span-2 space-y-2">
-            <Label htmlFor="nextSteps">Next Steps</Label>
-            <Textarea
-              id="nextSteps"
-              value={formData.nextSteps}
-              onChange={(e) => handleChange("nextSteps", e.target.value)}
-              rows={2}
-              placeholder="What will you focus on next?"
-            />
-          </div>
+              <div className="col-span-1 md:col-span-2 space-y-2">
+                <Label htmlFor="nextSteps">Next Steps</Label>
+                <Textarea
+                  id="nextSteps"
+                  value={formData.nextSteps}
+                  onChange={(e) => handleChange("nextSteps", e.target.value)}
+                  rows={2}
+                  placeholder="What will you focus on next?"
+                />
+              </div>
+            </>
+          )}
+
+          {zenMode && (
+            <>
+              <div className="col-span-1 md:col-span-2 space-y-2">
+                <Label htmlFor="blockers">Blockers</Label>
+                <Textarea
+                  id="blockers"
+                  value={formData.blockers || ""}
+                  onChange={(e) => handleChange("blockers", e.target.value)}
+                  rows={2}
+                  placeholder="Any blockers or challenges faced during this session?"
+                />
+              </div>
+
+              <div className="col-span-1 md:col-span-2 space-y-2">
+                <Label htmlFor="reflections">Reflections</Label>
+                <Textarea
+                  id="reflections"
+                  value={formData.reflections || ""}
+                  onChange={(e) => handleChange("reflections", e.target.value)}
+                  rows={2}
+                  placeholder="Personal reflections on today's session"
+                />
+              </div>
+            </>
+          )}
 
           <div className="col-span-1 md:col-span-2 space-y-2">
             <Label htmlFor="tags">Tags</Label>

@@ -22,8 +22,10 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
       className={`markdown-content ${className}`}
       remarkPlugins={[remarkGfm]}
       components={{
-        code({ node, inline, className, children, ...props }) {
+        code({ node, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || '');
+          const inline = !match && !props.node?.position?.start?.line;
+          
           return !inline && match ? (
             <SyntaxHighlighter
               style={vscDarkPlus}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { LogEntry, Topic, Platform, DifficultyLevel, LogType } from "@/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,9 +12,10 @@ interface LogsListProps {
   logs: LogEntry[];
   onEdit: (log: LogEntry) => void;
   onDelete: (id: string) => void;
+  zenMode?: boolean; // Added missing prop
 }
 
-export default function LogsList({ logs, onEdit, onDelete }: LogsListProps) {
+export default function LogsList({ logs, onEdit, onDelete, zenMode = false }: LogsListProps) {
   const [filterTopic, setFilterTopic] = useState<Topic | "all">("all");
   const [filterPlatform, setFilterPlatform] = useState<Platform | "all">("all");
   const [filterType, setFilterType] = useState<LogType | "all">("all");
@@ -78,80 +78,82 @@ export default function LogsList({ logs, onEdit, onDelete }: LogsListProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <Input 
-            placeholder="Search logs..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      {!zenMode && (
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <Input 
+              placeholder="Search logs..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Select value={filterTopic} onValueChange={(value) => setFilterTopic(value as Topic | "all")}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Topic" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Topics</SelectItem>
+                <SelectItem value="arrays">Arrays</SelectItem>
+                <SelectItem value="strings">Strings</SelectItem>
+                <SelectItem value="linkedlist">Linked List</SelectItem>
+                <SelectItem value="trees">Trees</SelectItem>
+                <SelectItem value="graphs">Graphs</SelectItem>
+                <SelectItem value="dp">Dynamic Programming</SelectItem>
+                <SelectItem value="greedy">Greedy</SelectItem>
+                <SelectItem value="backtracking">Backtracking</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filterPlatform} onValueChange={(value) => setFilterPlatform(value as Platform | "all")}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Platform" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Platforms</SelectItem>
+                <SelectItem value="leetcode">LeetCode</SelectItem>
+                <SelectItem value="codeforces">Codeforces</SelectItem>
+                <SelectItem value="hackerrank">HackerRank</SelectItem>
+                <SelectItem value="codechef">CodeChef</SelectItem>
+                <SelectItem value="atcoder">AtCoder</SelectItem>
+                <SelectItem value="geeksforgeeks">GeeksForGeeks</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filterType} onValueChange={(value) => setFilterType(value as LogType | "all")}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Log Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="practice">Practice</SelectItem>
+                <SelectItem value="contest">Contest</SelectItem>
+                <SelectItem value="learning">Learning</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={sortBy} onValueChange={(value) => setSortBy(value as "date" | "topic" | "platform")}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Date</SelectItem>
+                <SelectItem value="topic">Topic</SelectItem>
+                <SelectItem value="platform">Platform</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button 
+              variant="outline" 
+              onClick={() => setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
+            >
+              {sortDirection === "asc" ? "↑" : "↓"}
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Select value={filterTopic} onValueChange={(value) => setFilterTopic(value as Topic | "all")}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Topic" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Topics</SelectItem>
-              <SelectItem value="arrays">Arrays</SelectItem>
-              <SelectItem value="strings">Strings</SelectItem>
-              <SelectItem value="linkedlist">Linked List</SelectItem>
-              <SelectItem value="trees">Trees</SelectItem>
-              <SelectItem value="graphs">Graphs</SelectItem>
-              <SelectItem value="dp">Dynamic Programming</SelectItem>
-              <SelectItem value="greedy">Greedy</SelectItem>
-              <SelectItem value="backtracking">Backtracking</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={filterPlatform} onValueChange={(value) => setFilterPlatform(value as Platform | "all")}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Platform" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Platforms</SelectItem>
-              <SelectItem value="leetcode">LeetCode</SelectItem>
-              <SelectItem value="codeforces">Codeforces</SelectItem>
-              <SelectItem value="hackerrank">HackerRank</SelectItem>
-              <SelectItem value="codechef">CodeChef</SelectItem>
-              <SelectItem value="atcoder">AtCoder</SelectItem>
-              <SelectItem value="geeksforgeeks">GeeksForGeeks</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={filterType} onValueChange={(value) => setFilterType(value as LogType | "all")}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Log Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="practice">Practice</SelectItem>
-              <SelectItem value="contest">Contest</SelectItem>
-              <SelectItem value="learning">Learning</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={sortBy} onValueChange={(value) => setSortBy(value as "date" | "topic" | "platform")}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date">Date</SelectItem>
-              <SelectItem value="topic">Topic</SelectItem>
-              <SelectItem value="platform">Platform</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button 
-            variant="outline" 
-            onClick={() => setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
-          >
-            {sortDirection === "asc" ? "↑" : "↓"}
-          </Button>
-        </div>
-      </div>
+      )}
 
       {filteredLogs.length === 0 ? (
         <div className="text-center py-12">
