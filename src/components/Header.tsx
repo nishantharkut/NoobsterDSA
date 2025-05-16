@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 import {
   PlusIcon, 
   CalendarIcon, 
@@ -41,24 +42,24 @@ export function Header({
   const isMobile = useIsMobile();
   
   const renderTabContent = () => (
-    <TabsList className="w-full md:w-auto">
+    <TabsList className="w-full md:w-auto flex-wrap inline-table table-fixed">
       <TabsTrigger value="dashboard" className="flex gap-1">
         <TrendingUpIcon className="h-4 w-4" />
         <span>Dashboard</span>
       </TabsTrigger>
-      <TabsTrigger value="logs" className="flex gap-1">
+      <TabsTrigger value="logs" className="flex gap-1 mt-2.5">
         <ListIcon className="h-4 w-4" />
         <span>Logs</span>
       </TabsTrigger>
-      <TabsTrigger value="goals" className="flex gap-1">
+      <TabsTrigger value="goals" className="flex gap-1 mt-2.5">
         <Flag className="h-4 w-4" />
         <span>Weekly Goals</span>
       </TabsTrigger>
-      <TabsTrigger value="templates" className="flex gap-1">
+      <TabsTrigger value="templates" className="flex gap-1 mt-2.5">
         <CalendarIcon className="h-4 w-4" />
         <span>Templates</span>
       </TabsTrigger>
-      <TabsTrigger value="analytics" className="flex gap-1">
+      <TabsTrigger value="analytics" className="flex gap-1 mt-2.5">
         <LayoutGrid className="h-4 w-4" />
         <span>Analytics</span>
       </TabsTrigger>
@@ -69,8 +70,8 @@ export function Header({
     <header className={`sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${zenMode ? 'py-4' : ''}`}>
       <div className={`container flex h-16 items-center justify-between ${zenMode ? 'max-w-2xl' : ''}`}>
         <div className="flex items-center gap-2">
-          <TrendingUpIcon className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">CodeProgress</h1>
+          <Logo size={24}/>
+          <h1 className="text-xl font-bold text-foreground">NoobsterDSA</h1>
         </div>
 
         {!zenMode && (
