@@ -25,17 +25,17 @@ export default function Analytics({ logs }: AnalyticsProps) {
   }
 
   const topicMasteryData = Object.entries(analytics.topicMastery)
-    .filter(([_, score]) => score > 0)
+    .filter(([_, score]) => Number(score) > 0)
     .map(([topic, score]) => ({
       name: topic.charAt(0).toUpperCase() + topic.slice(1),
-      score,
-      label: getMasteryLabel(score)
+      score: Number(score),
+      label: getMasteryLabel(Number(score))
     }))
     .sort((a, b) => b.score - a.score);
 
   // Data for time distribution chart
   const timeDistributionData = Object.entries(analytics.topicBreakdown)
-    .filter(([_, count]) => count > 0)
+    .filter(([_, count]) => Number(count) > 0)
     .map(([topic, count]) => {
       const topicLogs = logs.filter(log => log.topic === topic as Topic);
       const totalTime = topicLogs.reduce((sum, log) => sum + log.timeSpent, 0);
@@ -43,7 +43,7 @@ export default function Analytics({ logs }: AnalyticsProps) {
       return {
         name: topic.charAt(0).toUpperCase() + topic.slice(1),
         time: Math.round(totalTime / 60), // Convert to hours
-        problems: count
+        problems: Number(count)
       };
     })
     .sort((a, b) => b.time - a.time);
@@ -74,7 +74,7 @@ export default function Analytics({ logs }: AnalyticsProps) {
   const topicCoverageData = Object.entries(analytics.topicBreakdown)
     .map(([topic, count]) => ({
       name: topic.charAt(0).toUpperCase() + topic.slice(1),
-      value: count
+      value: Number(count)
     }))
     .filter(item => item.value > 0);
 

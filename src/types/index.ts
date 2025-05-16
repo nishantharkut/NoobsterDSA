@@ -1,4 +1,3 @@
-
 export type Topic = 
   | "arrays" 
   | "strings" 
@@ -86,7 +85,7 @@ export interface Analytics {
   totalProblems: number;
   totalTime: number; // minutes
   topicBreakdown: Record<Topic, number>;
-  difficultyBreakdown: Record<DifficultyLevel, number>;
+  difficultyBreakdown: Record<string, number>;
   weeklyProgress: Array<{
     week: string; // Format: "YYYY-WW"
     problems: number;
@@ -116,4 +115,3 @@ export interface StreakData {
   longestStreak: number;
   lastActiveDate: string; // Format: "YYYY-MM-DD"
 }
-
