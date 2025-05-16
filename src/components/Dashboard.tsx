@@ -1,5 +1,4 @@
-
-import { LogEntry } from "@/types";
+import { LogEntry, WeeklyGoal } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from "recharts";
@@ -8,13 +7,15 @@ import { ClockIcon, TrendingUpIcon, CheckIcon, CalendarIcon } from "lucide-react
 import StreakCard from "./dashboard/StreakCard";
 import RecentActivity from "./dashboard/RecentActivity";
 import DifficultyTrends from "./dashboard/DifficultyTrends";
+import GoalCompletion from "./dashboard/GoalCompletion";
 
 interface DashboardProps {
   logs: LogEntry[];
+  goals: WeeklyGoal[];
   recentDays?: number;
 }
 
-export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
+export default function Dashboard({ logs, goals, recentDays = 30 }: DashboardProps) {
   // Filter logs for recent data
   const recentDate = new Date();
   recentDate.setDate(recentDate.getDate() - recentDays);
@@ -91,6 +92,7 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           lastActiveDate={allTimeAnalytics.lastActive}
         />
         
+        {/* Total Problems Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Problems</CardTitle>
@@ -106,6 +108,7 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           </CardContent>
         </Card>
         
+        {/* Total Time Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Time</CardTitle>
@@ -121,6 +124,7 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           </CardContent>
         </Card>
 
+        {/* Most Practiced Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Most Practiced</CardTitle>
@@ -144,7 +148,7 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
         </Card>
       </div>
 
-      {/* Middle section with Topic distribution and Recent Activity */}
+      {/* Middle section with Topic distribution and Goal Completion */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Topic Distribution */}
         <Card className="col-span-1">
@@ -181,13 +185,13 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
+        {/* Goal Completion */}
         <div className="col-span-1">
-          <RecentActivity logs={logs} />
+          <GoalCompletion goals={goals} />
         </div>
       </div>
 
-      {/* Bottom section with Difficulty distribution and Difficulty trends */}
+      {/* Bottom section with Difficulty distribution and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Difficulty Distribution */}
         <Card className="col-span-1">
@@ -224,10 +228,15 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           </CardContent>
         </Card>
 
-        {/* Difficulty Trends */}
+        {/* Recent Activity */}
         <div className="col-span-1">
-          <DifficultyTrends logs={logs} />
+          <RecentActivity logs={logs} />
         </div>
+      </div>
+
+      {/* Difficulty Trends */}
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        <DifficultyTrends logs={logs} />
       </div>
 
       {/* Weekly Progress */}
