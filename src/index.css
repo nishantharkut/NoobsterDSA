@@ -182,4 +182,41 @@
   .markdown-content pre {
     @apply font-code bg-muted p-3 rounded mb-4 overflow-x-auto;
   }
+  
+  /* Responsive utilities */
+  .responsive-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+  
+  .responsive-card {
+    @apply p-4 rounded-lg border shadow-sm;
+  }
+  
+  /* Mobile-specific styles */
+  @media (max-width: 767px) {
+    .mobile-full-width {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    .mobile-stack {
+      @apply flex flex-col !important;
+    }
+    
+    .mobile-hidden {
+      @apply hidden;
+    }
+    
+    .mobile-text-sm {
+      @apply text-sm;
+    }
+    
+    .mobile-text-center {
+      @apply text-center;
+    }
+    
+    .mobile-p-2 {
+      @apply p-2;
+    }
+  }
 }

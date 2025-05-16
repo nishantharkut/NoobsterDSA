@@ -9,10 +9,17 @@ import {
   Flag,
   LayoutGrid,
   Moon,
-  Sun
+  Sun,
+  Menu
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toggle } from "@/components/ui/toggle";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export type ActiveTab = "dashboard" | "logs" | "goals" | "templates" | "analytics";
 
@@ -31,6 +38,33 @@ export function Header({
   zenMode, 
   onZenModeChange 
 }: HeaderProps) {
+  const isMobile = useIsMobile();
+  
+  const renderTabContent = () => (
+    <TabsList className="w-full md:w-auto">
+      <TabsTrigger value="dashboard" className="flex gap-1">
+        <TrendingUpIcon className="h-4 w-4" />
+        <span>Dashboard</span>
+      </TabsTrigger>
+      <TabsTrigger value="logs" className="flex gap-1">
+        <ListIcon className="h-4 w-4" />
+        <span>Logs</span>
+      </TabsTrigger>
+      <TabsTrigger value="goals" className="flex gap-1">
+        <Flag className="h-4 w-4" />
+        <span>Weekly Goals</span>
+      </TabsTrigger>
+      <TabsTrigger value="templates" className="flex gap-1">
+        <CalendarIcon className="h-4 w-4" />
+        <span>Templates</span>
+      </TabsTrigger>
+      <TabsTrigger value="analytics" className="flex gap-1">
+        <LayoutGrid className="h-4 w-4" />
+        <span>Analytics</span>
+      </TabsTrigger>
+    </TabsList>
+  );
+
   return (
     <header className={`sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${zenMode ? 'py-4' : ''}`}>
       <div className={`container flex h-16 items-center justify-between ${zenMode ? 'max-w-2xl' : ''}`}>
@@ -40,30 +74,38 @@ export function Header({
         </div>
 
         {!zenMode && (
-          <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as ActiveTab)} className="hidden md:flex">
-            <TabsList>
-              <TabsTrigger value="dashboard" className="flex gap-1">
-                <TrendingUpIcon className="h-4 w-4" />
-                <span>Dashboard</span>
-              </TabsTrigger>
-              <TabsTrigger value="logs" className="flex gap-1">
-                <ListIcon className="h-4 w-4" />
-                <span>Logs</span>
-              </TabsTrigger>
-              <TabsTrigger value="goals" className="flex gap-1">
-                <Flag className="h-4 w-4" />
-                <span>Weekly Goals</span>
-              </TabsTrigger>
-              <TabsTrigger value="templates" className="flex gap-1">
-                <CalendarIcon className="h-4 w-4" />
-                <span>Templates</span>
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex gap-1">
-                <LayoutGrid className="h-4 w-4" />
-                <span>Analytics</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <>
+            {/* Desktop Navigation */}
+            <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as ActiveTab)} className="hidden md:flex">
+              {renderTabContent()}
+            </Tabs>
+            
+            {/* Mobile Navigation */}
+            {isMobile && (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left">
+                  <div className="mt-8">
+                    <Tabs 
+                      value={activeTab} 
+                      onValueChange={(v) => {
+                        onTabChange(v as ActiveTab);
+                      }}
+                      orientation="vertical"
+                      className="w-full"
+                    >
+                      {renderTabContent()}
+                    </Tabs>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
+          </>
         )}
 
         <div className="flex items-center gap-2">
@@ -78,7 +120,7 @@ export function Header({
           
           <Button onClick={onCreateLog} className="flex items-center gap-1">
             <PlusIcon className="h-4 w-4" />
-            <span className="hidden md:inline">{zenMode ? "New Entry" : "New Log"}</span>
+            <span className={isMobile ? "hidden" : ""}>{zenMode ? "New Entry" : "New Log"}</span>
           </Button>
         </div>
       </div>
