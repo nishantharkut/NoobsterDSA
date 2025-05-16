@@ -22,7 +22,8 @@ export type Platform =
 export type LogType = 
   | "practice" 
   | "contest" 
-  | "learning";
+  | "learning"
+  | "mock_interview";
 
 export type DifficultyLevel = 
   | "easy" 
@@ -42,6 +43,11 @@ export interface LogEntry {
   resources: string;
   nextSteps: string;
   tags: string[];
+  problemUrl?: string;
+  selfRating?: number; // 1-5 rating of self-effort
+  blockers?: string;
+  reflections?: string;
+  zenMode?: boolean;
 }
 
 export interface WeeklyGoal {
@@ -55,6 +61,9 @@ export interface WeeklyGoal {
     timeSpent: number;
   };
   notes: string;
+  streakDays?: number; // Number of consecutive days with activity
+  focusAreas?: Topic[]; // Areas to focus on this week
+  weeklyReflection?: string; // End of week reflection
 }
 
 export interface TemplateData {
@@ -68,6 +77,9 @@ export interface TemplateData {
   resources: string;
   nextSteps: string;
   tags: string[];
+  defaultTimeSpent?: number;
+  isDefault?: boolean;
+  markdownEnabled?: boolean;
 }
 
 export interface Analytics {
@@ -80,4 +92,28 @@ export interface Analytics {
     problems: number;
     time: number; // minutes
   }>;
+  streak: number; // Current streak of consecutive days
+  longestStreak: number; // Longest streak ever achieved
+  topicMastery: Record<Topic, number>; // Mastery level by topic (0-100)
+  suggestedFocus: Topic[]; // Suggested topics to focus on next
+  heatmapData: Array<{
+    date: string; // Format: "YYYY-MM-DD"
+    count: number;
+  }>;
+  lastActive: string; // Date of last activity
 }
+
+// New interface for platform patterns to auto-detect platform and difficulty
+export interface PlatformPattern {
+  platform: Platform;
+  urlPattern: RegExp;
+  difficultyExtractor?: (url: string) => DifficultyLevel | null;
+}
+
+// New interface for streak tracking
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string; // Format: "YYYY-MM-DD"
+}
+

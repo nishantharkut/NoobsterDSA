@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,6 +7,7 @@
 
 @layer base {
   :root {
+    /* Base theme colors - tech-inspired palette */
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
 
@@ -16,13 +17,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221 83% 53%;
+    /* Deep blue for primary */
+    --primary: 216 98% 52%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 199 89% 48%;
+    /* Teal for secondary */
+    --secondary: 185 84% 47%;
     --secondary-foreground: 210 40% 98%;
 
-    --accent: 199 89% 48%;
+    /* Teal accent */
+    --accent: 185 84% 47%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
@@ -33,9 +37,20 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --ring: 216 98% 52%;
 
     --radius: 0.5rem;
+
+    /* Status colors */
+    --success: 142 71% 45%;
+    --warning: 48 96% 53%; 
+    --info: 199 89% 48%;
+
+    /* Deep accent colors */
+    --deep-blue: 221 83% 23%;
+    --deep-teal: 185 84% 27%;
+    --teal: 185 84% 47%;
+    --teal-foreground: 210 40% 98%;
 
     /* Topic Colors */
     --arrays: 221 83% 53%;
@@ -61,10 +76,10 @@
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 199 89% 48%;
+    --secondary: 185 84% 47%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --accent: 199 89% 48%;
+    --accent: 185 84% 47%;
     --accent-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
@@ -76,6 +91,17 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+
+    /* Status colors - dark mode */
+    --success: 142 71% 35%;
+    --warning: 48 96% 43%; 
+    --info: 199 89% 38%;
+
+    /* Deep accent colors - dark mode */
+    --deep-blue: 221 83% 33%;
+    --deep-teal: 185 84% 37%;
+    --teal: 185 84% 47%;
+    --teal-foreground: 210 40% 98%;
   }
 }
 
@@ -104,4 +130,56 @@
   .tag-dp { @apply bg-[hsl(var(--dp)/0.2)] text-[hsl(var(--dp))] border-[hsl(var(--dp)/0.3)]; }
   .tag-greedy { @apply bg-[hsl(var(--greedy)/0.2)] text-[hsl(var(--greedy))] border-[hsl(var(--greedy)/0.3)]; }
   .tag-backtracking { @apply bg-[hsl(var(--backtracking)/0.2)] text-[hsl(var(--backtracking))] border-[hsl(var(--backtracking)/0.3)]; }
+  
+  /* Animation classes */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-glow:hover {
+    @apply shadow-lg;
+    box-shadow: 0 0 15px rgba(var(--teal-rgb, 47, 214, 230), 0.5);
+  }
+  
+  /* Zen mode styling */
+  .zen-mode {
+    @apply max-w-2xl mx-auto py-8 px-4;
+  }
+  
+  /* Markdown styling */
+  .markdown-content h1 {
+    @apply text-2xl font-bold mb-4;
+  }
+  
+  .markdown-content h2 {
+    @apply text-xl font-bold mb-3;
+  }
+  
+  .markdown-content h3 {
+    @apply text-lg font-bold mb-2;
+  }
+  
+  .markdown-content p {
+    @apply mb-4;
+  }
+  
+  .markdown-content ul {
+    @apply list-disc ml-5 mb-4;
+  }
+  
+  .markdown-content ol {
+    @apply list-decimal ml-5 mb-4;
+  }
+  
+  .markdown-content code {
+    @apply font-code bg-muted px-1 py-0.5 rounded;
+  }
+  
+  .markdown-content pre {
+    @apply font-code bg-muted p-3 rounded mb-4 overflow-x-auto;
+  }
 }

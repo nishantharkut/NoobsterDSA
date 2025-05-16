@@ -7,41 +7,53 @@ import LogsList from "@/components/LogsList";
 import WeeklyGoals from "@/components/WeeklyGoals";
 import TemplateSelector from "@/components/templates/TemplateSelector";
 import Dashboard from "@/components/Dashboard";
+import Analytics from "@/components/Analytics";
 import { useToast } from "@/components/ui/use-toast";
+import { toast as sonnerToast } from "sonner";
+import { loadFromLocalStorage, saveToLocalStorage, isOfflineSupported } from "@/utils/streakTracking";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
   const [logs, setLogs] = useState<LogEntry[]>(() => {
-    const savedLogs = localStorage.getItem("codeLogs");
-    return savedLogs ? JSON.parse(savedLogs) : [];
+    return loadFromLocalStorage("codeLogs", []);
   });
 
   const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>(() => {
-    const savedGoals = localStorage.getItem("codeGoals");
-    return savedGoals ? JSON.parse(savedGoals) : [];
+    return loadFromLocalStorage("codeGoals", []);
   });
 
   const [templates, setTemplates] = useState<TemplateData[]>(() => {
-    const savedTemplates = localStorage.getItem("codeTemplates");
-    return savedTemplates ? JSON.parse(savedTemplates) : [];
+    return loadFromLocalStorage("codeTemplates", []);
   });
 
   const [isNewLogOpen, setIsNewLogOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
-
+  const [zenMode, setZenMode] = useState(false);
+  
   const { toast } = useToast();
+
+  // Check offline support and notify user
+  useEffect(() => {
+    const offlineSupported = isOfflineSupported();
+    if (offlineSupported) {
+      sonnerToast("Offline mode available", {
+        description: "Your data will be saved locally even when offline.",
+        duration: 5000
+      });
+    }
+  }, []);
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("codeLogs", JSON.stringify(logs));
+    saveToLocalStorage("codeLogs", logs);
   }, [logs]);
 
   useEffect(() => {
-    localStorage.setItem("codeGoals", JSON.stringify(weeklyGoals));
+    saveToLocalStorage("codeGoals", weeklyGoals);
   }, [weeklyGoals]);
 
   useEffect(() => {
-    localStorage.setItem("codeTemplates", JSON.stringify(templates));
+    saveToLocalStorage("codeTemplates", templates);
   }, [templates]);
 
   const handleCreateLog = () => {
@@ -133,16 +145,26 @@ const Index = () => {
     });
   };
 
+  const handleZenModeChange = (enabled: boolean) => {
+    setZenMode(enabled);
+    if (enabled) {
+      // If entering zen mode, automatically go to logs tab
+      setActiveTab("logs");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header 
         activeTab={activeTab} 
         onTabChange={setActiveTab} 
-        onCreateLog={handleCreateLog} 
+        onCreateLog={handleCreateLog}
+        zenMode={zenMode}
+        onZenModeChange={handleZenModeChange}
       />
       
-      <main className="flex-1 container py-8">
-        {activeTab === "dashboard" && (
+      <main className={`flex-1 container py-8 ${zenMode ? 'max-w-2xl' : ''}`}>
+        {activeTab === "dashboard" && !zenMode && (
           <Dashboard logs={logs} />
         )}
         
@@ -150,11 +172,12 @@ const Index = () => {
           <LogsList 
             logs={logs} 
             onEdit={handleEditLog}
-            onDelete={handleDeleteLog} 
+            onDelete={handleDeleteLog}
+            zenMode={zenMode}
           />
         )}
         
-        {activeTab === "goals" && (
+        {activeTab === "goals" && !zenMode && (
           <WeeklyGoals 
             goals={weeklyGoals}
             logs={logs}
@@ -163,12 +186,16 @@ const Index = () => {
           />
         )}
         
-        {activeTab === "templates" && (
+        {activeTab === "templates" && !zenMode && (
           <TemplateSelector 
             templates={templates}
             onSaveTemplate={handleSaveTemplate}
             onDeleteTemplate={handleDeleteTemplate}
           />
+        )}
+
+        {activeTab === "analytics" && !zenMode && (
+          <Analytics logs={logs} />
         )}
       </main>
       
@@ -178,6 +205,7 @@ const Index = () => {
         onSave={handleSaveLog}
         templates={templates}
         initialData={editingLog || {}}
+        zenMode={zenMode}
       />
     </div>
   );

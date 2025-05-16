@@ -1,5 +1,6 @@
 
 import { LogEntry, WeeklyGoal, Topic, DifficultyLevel, Analytics } from "@/types";
+import { generateHeatmapData, calculateStreak } from "./streakTracking";
 
 export function calculateWeekNumber(date: Date): string {
   const d = new Date(date);
@@ -37,7 +38,13 @@ export function generateAnalytics(logs: LogEntry[]): Analytics {
     totalTime: 0,
     topicBreakdown: {} as Record<Topic, number>,
     difficultyBreakdown: {} as Record<DifficultyLevel, number>,
-    weeklyProgress: []
+    weeklyProgress: [],
+    streak: 0,
+    longestStreak: 0,
+    topicMastery: {} as Record<Topic, number>,
+    suggestedFocus: [],
+    heatmapData: [],
+    lastActive: ''
   };
 
   // Initialize topic and difficulty counts
@@ -46,14 +53,31 @@ export function generateAnalytics(logs: LogEntry[]): Analytics {
   
   topics.forEach(topic => {
     analytics.topicBreakdown[topic] = 0;
+    analytics.topicMastery[topic] = 0;
   });
   
   difficulties.forEach(difficulty => {
     analytics.difficultyBreakdown[difficulty] = 0;
   });
 
+  if (logs.length === 0) {
+    return analytics;
+  }
+
   // Week-based organization
   const weekLogs: Record<string, { problems: number, time: number }> = {};
+
+  // Calculate streak
+  const streakData = calculateStreak(logs);
+  analytics.streak = streakData.currentStreak;
+  analytics.longestStreak = streakData.longestStreak;
+  analytics.lastActive = streakData.lastActiveDate;
+
+  // Topic proficiency tracking
+  const topicDifficultyPoints: Record<Topic, { points: number, count: number }> = {};
+  topics.forEach(topic => {
+    topicDifficultyPoints[topic] = { points: 0, count: 0 };
+  });
 
   logs.forEach(log => {
     // Total counts
@@ -73,6 +97,14 @@ export function generateAnalytics(logs: LogEntry[]): Analytics {
     }
     weekLogs[week].problems += log.problemCount;
     weekLogs[week].time += log.timeSpent;
+
+    // Calculate topic mastery based on difficulty
+    let difficultyPoints = 1; // Default points
+    if (log.difficultyLevel === 'medium') difficultyPoints = 2;
+    if (log.difficultyLevel === 'hard') difficultyPoints = 3;
+
+    topicDifficultyPoints[log.topic].points += (difficultyPoints * log.problemCount);
+    topicDifficultyPoints[log.topic].count += log.problemCount;
   });
 
   // Convert weekly logs to array and sort by week
@@ -83,6 +115,38 @@ export function generateAnalytics(logs: LogEntry[]): Analytics {
       time: data.time,
     }))
     .sort((a, b) => a.week.localeCompare(b.week));
+
+  // Calculate topic mastery (0-100 scale)
+  topics.forEach(topic => {
+    const { points, count } = topicDifficultyPoints[topic];
+    if (count > 0) {
+      // Base mastery: proportion of max difficulty points (3 per problem)
+      const baseMastery = (points / (count * 3)) * 70;
+      
+      // Volume bonus: more problems solved in a topic increases mastery
+      const volumeBonus = Math.min(30, count * 0.5);
+      
+      analytics.topicMastery[topic] = Math.round(baseMastery + volumeBonus);
+    }
+  });
+
+  // Generate suggested focus areas (topics with lowest mastery that have been started)
+  const startedTopics = topics.filter(topic => topicDifficultyPoints[topic].count > 0);
+  analytics.suggestedFocus = [...startedTopics]
+    .sort((a, b) => analytics.topicMastery[a] - analytics.topicMastery[b])
+    .slice(0, 3);
+  
+  // If there are fewer than 3 suggested topics, add topics that haven't been started
+  const unusedTopics = topics.filter(topic => topicDifficultyPoints[topic].count === 0);
+  if (analytics.suggestedFocus.length < 3) {
+    analytics.suggestedFocus = [
+      ...analytics.suggestedFocus,
+      ...unusedTopics.slice(0, 3 - analytics.suggestedFocus.length)
+    ];
+  }
+
+  // Generate heatmap data
+  analytics.heatmapData = generateHeatmapData(logs);
 
   return analytics;
 }
@@ -105,9 +169,15 @@ export function calculateWeeklyGoalProgress(
     }
   });
 
+  // Calculate streak days for this week
+  const uniqueDaysInWeek = new Set(
+    weekLogs.map(log => new Date(log.date).toDateString())
+  );
+  
   return {
     ...goal,
-    achieved
+    achieved,
+    streakDays: uniqueDaysInWeek.size
   };
 }
 
@@ -120,4 +190,29 @@ export function formatMinutes(minutes: number): string {
   }
   
   return `${hours}h ${mins > 0 ? mins + 'm' : ''}`;
+}
+
+// Calculate progress percentage for goals
+export function calculateProgressPercentage(achieved: number, target: number): number {
+  if (target <= 0) return 0;
+  const percentage = (achieved / target) * 100;
+  return Math.min(100, Math.round(percentage));
+}
+
+// Get mastery level label based on score
+export function getMasteryLabel(score: number): string {
+  if (score >= 90) return 'Expert';
+  if (score >= 75) return 'Advanced';
+  if (score >= 50) return 'Intermediate';
+  if (score >= 25) return 'Beginner';
+  return 'Novice';
+}
+
+// Get color class based on mastery score
+export function getMasteryColorClass(score: number): string {
+  if (score >= 90) return 'text-success';
+  if (score >= 75) return 'text-teal';
+  if (score >= 50) return 'text-info';
+  if (score >= 25) return 'text-warning';
+  return 'text-muted-foreground';
 }
