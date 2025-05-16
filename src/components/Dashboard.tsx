@@ -1,10 +1,13 @@
 
-import { Analytics, LogEntry, Topic, DifficultyLevel } from "@/types";
+import { LogEntry } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from "recharts";
 import { formatMinutes, generateAnalytics } from "@/utils/analytics";
 import { ClockIcon, TrendingUpIcon, CheckIcon, CalendarIcon } from "lucide-react";
+import StreakCard from "./dashboard/StreakCard";
+import RecentActivity from "./dashboard/RecentActivity";
+import DifficultyTrends from "./dashboard/DifficultyTrends";
 
 interface DashboardProps {
   logs: LogEntry[];
@@ -76,12 +79,18 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
   // Get the most practiced topic
   const sortedTopics = [...Object.entries(allTimeAnalytics.topicBreakdown)]
     .sort((a, b) => b[1] - a[1]);
-  const topTopic = sortedTopics.length > 0 ? sortedTopics[0][0] as Topic : null;
+  const topTopic = sortedTopics.length > 0 ? sortedTopics[0][0] : null;
 
   return (
     <div className="space-y-8">
       {/* Quick stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StreakCard 
+          currentStreak={allTimeAnalytics.streak}
+          longestStreak={allTimeAnalytics.longestStreak}
+          lastActiveDate={allTimeAnalytics.lastActive}
+        />
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Problems</CardTitle>
@@ -133,24 +142,9 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
             )}
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Active Days</CardTitle>
-            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {new Set(logs.map(log => new Date(log.date).toDateString())).size}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {new Set(recentLogs.map(log => new Date(log.date).toDateString())).size} in the last {recentDays} days
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Charts */}
+      {/* Middle section with Topic distribution and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Topic Distribution */}
         <Card className="col-span-1">
@@ -174,7 +168,7 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
                   {topicChartData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={TOPIC_COLORS[entry.name.toLowerCase() as Topic] || "#8884d8"} 
+                      fill={TOPIC_COLORS[entry.name.toLowerCase()] || "#8884d8"} 
                     />
                   ))}
                 </Pie>
@@ -187,6 +181,14 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           </CardContent>
         </Card>
 
+        {/* Recent Activity */}
+        <div className="col-span-1">
+          <RecentActivity logs={logs} />
+        </div>
+      </div>
+
+      {/* Bottom section with Difficulty distribution and Difficulty trends */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Difficulty Distribution */}
         <Card className="col-span-1">
           <CardHeader>
@@ -209,7 +211,7 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
                   {difficultyChartData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={DIFFICULTY_COLORS[entry.name.toLowerCase() as DifficultyLevel] || "#8884d8"} 
+                      fill={DIFFICULTY_COLORS[entry.name.toLowerCase()] || "#8884d8"} 
                     />
                   ))}
                 </Pie>
@@ -222,40 +224,45 @@ export default function Dashboard({ logs, recentDays = 30 }: DashboardProps) {
           </CardContent>
         </Card>
 
-        {/* Weekly Progress */}
-        <Card className="col-span-1 lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Weekly Progress</CardTitle>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={weeklyProgressData}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 30,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--primary))" />
-                <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--secondary))" />
-                <Tooltip 
-                  formatter={(value: number, name: string) => {
-                    if (name === "problems") return [`${value} problems`, "Problems Solved"];
-                    if (name === "time") return [`${value} hours`, "Hours Spent"];
-                    return [value, name];
-                  }}
-                />
-                <Bar yAxisId="left" dataKey="problems" fill="hsl(var(--primary))" name="Problems" />
-                <Bar yAxisId="right" dataKey="time" fill="hsl(var(--secondary))" name="Hours" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {/* Difficulty Trends */}
+        <div className="col-span-1">
+          <DifficultyTrends logs={logs} />
+        </div>
       </div>
+
+      {/* Weekly Progress */}
+      <Card className="col-span-1 lg:col-span-2">
+        <CardHeader>
+          <CardTitle>Weekly Progress</CardTitle>
+        </CardHeader>
+        <CardContent className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={weeklyProgressData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 30,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--primary))" />
+              <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--secondary))" />
+              <Tooltip 
+                formatter={(value: number, name: string) => {
+                  if (name === "problems") return [`${value} problems`, "Problems Solved"];
+                  if (name === "time") return [`${value} hours`, "Hours Spent"];
+                  return [value, name];
+                }}
+              />
+              <Bar yAxisId="left" dataKey="problems" fill="hsl(var(--primary))" name="Problems" />
+              <Bar yAxisId="right" dataKey="time" fill="hsl(var(--secondary))" name="Hours" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
     </div>
   );
 }

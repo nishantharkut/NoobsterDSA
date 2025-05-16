@@ -165,7 +165,10 @@ const Index = () => {
       
       <main className={`flex-1 container py-8 ${zenMode ? 'max-w-2xl' : ''}`}>
         {activeTab === "dashboard" && !zenMode && (
-          <Dashboard logs={logs} />
+          <Dashboard 
+            logs={logs} 
+            goals={weeklyGoals}
+          />
         )}
         
         {activeTab === "logs" && (
