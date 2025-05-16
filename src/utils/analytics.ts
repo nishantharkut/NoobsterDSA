@@ -73,8 +73,8 @@ export function generateAnalytics(logs: LogEntry[]): Analytics {
   analytics.longestStreak = streakData.longestStreak;
   analytics.lastActive = streakData.lastActiveDate;
 
-  // Topic proficiency tracking
-  const topicDifficultyPoints: Record<Topic, { points: number, count: number }> = {};
+  // Topic proficiency tracking - FIX: Initialize with all topics properly
+  const topicDifficultyPoints: Record<Topic, { points: number, count: number }> = {} as Record<Topic, { points: number, count: number }>;
   topics.forEach(topic => {
     topicDifficultyPoints[topic] = { points: 0, count: 0 };
   });
