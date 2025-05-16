@@ -1,6 +1,8 @@
 # NoobsterDSA
 
 **Track your DSA & CP progress with ease, clarity, and motivation.**  
+![favicon](https://github.com/user-attachments/assets/e00834ab-7707-4620-b9c2-0fe9b8ff16d2)
+
 A productivity-focused web app designed to help beginners in Data Structures & Algorithms and Competitive Programming log their daily practice, contest performance, and weekly goals—because consistency beats intensity.
 
 ---
