@@ -1,24 +1,24 @@
-# 🚀 NoobsterDSA
+# NoobsterDSA
 
 **Track your DSA & CP progress with ease, clarity, and motivation.**  
 A productivity-focused web app designed to help beginners in Data Structures & Algorithms and Competitive Programming log their daily practice, contest performance, and weekly goals—because consistency beats intensity.
 
 ---
 
-## 📌 Project Description
+## Project Description
 
 Every DSA beginner struggles with scattered resources—Striver’s A2Z, TLE Eliminator, NeetCode, and many more—making it hard to track progress in one place.  
 That’s why I built **NoobsterDSA**: a centralized logging and analytics platform tailored for the CP community to monitor:
 
-- ✅ Daily Practice Logs
-- 🧠 Contest Performances
-- 🎯 Weekly Goals & Reflections
+- Daily Practice Logs
+- Contest Performances
+- Weekly Goals & Reflections
 
 All with rich metadata support, auto-tagging, smart summaries, and a clean, gamified UI.
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer        | Technologies Used                                                                 |
 |--------------|------------------------------------------------------------------------------------|
@@ -31,9 +31,9 @@ All with rich metadata support, auto-tagging, smart summaries, and a clean, gami
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔹 Core Functional Features
+### Core Functional Features
 
 - **🗓️ Daily Logging System**  
   Log: Date, Topic, #Problems Solved, Platform, Difficulty, Time, Notes, Resources, Next Steps
@@ -46,56 +46,56 @@ All with rich metadata support, auto-tagging, smart summaries, and a clean, gami
 
 ---
 
-### 🔹 UI Enhancements
+### UI/UX Enhancements
 
-- **🎨 Color-Coded Tags & Icons** – for topics, difficulty, and platforms  
-- **🔍 Filtering & Sorting** – by topic, platform, date, difficulty  
-- **🧘 Zen Mode** – distraction-free logging  
-- **🌌 Clean Tech-Themed UI** – with smooth animations and responsiveness
-
----
-
-### 🔹 Analytics & Insights
-
-- 📊 **Weekly/Monthly Summaries**  
-- 📚 **Topic Proficiency Tracker**  
-- 📈 **Visual Dashboards**  
-- 🔥 **Heatmaps for Consistency**  
-- 📉 **Time Distribution & Mastery Charts**  
-- 💡 **Focus Suggestions Based on Logs**
+- **Color-Coded Tags & Icons** – for topics, difficulty, and platforms  
+- **Filtering & Sorting** – by topic, platform, date, difficulty  
+- **Zen Mode** – distraction-free logging  
+- **Clean Tech-Themed UI** – with smooth animations and responsiveness
 
 ---
 
-### 🔹 Advanced Functionalities
+### Analytics & Insights
 
-- **🌐 Auto-tagging from Problem URLs**  
+- **Weekly/Monthly Summaries**  
+- **Topic Proficiency Tracker**  
+- **Visual Dashboards**  
+- **Heatmaps for Consistency**  
+- **Time Distribution & Mastery Charts**  
+- **Focus Suggestions Based on Logs**
+
+---
+
+### Advanced Functionalities
+
+- **Auto-tagging from Problem URLs**  
   Auto-fill difficulty and platform when pasting LeetCode, Codeforces links
 
-- **📝 Markdown-enabled Notes**  
-- **📆 Habit-Driven Weekly Planner**  
-- **⚙️ Smart Defaults & Custom Templates**
+- **Markdown-enabled Notes**  
+- **Habit-Driven Weekly Planner**  
+- **Smart Defaults & Custom Templates**
 
 ---
 
-### 🔹 Customization & Gamification
+### Customization & Gamification
 
-- 🎖️ **Badges & Milestones**  
-- 🔁 **Streak Tracking**  
-- 🧩 **Custom Templates for Logs, Interviews, Reviews**
-
----
-
-### 🔹 Technical Features
-
-- 💻 **PWA Support** – Use offline  
-- 📱 **Mobile + Desktop Responsive**  
-- ⚡ **Fast, Smooth UX with Instant Feedback**
+- **Badges & Milestones**  
+- **Streak Tracking**  
+- **Custom Templates for Logs, Interviews, Reviews**
 
 ---
 
-## 🚀 Getting Started
+### Technical Features
 
-### 📦 Installation Instructions
+- **PWA Support** – Use offline  
+- **Mobile + Desktop Responsive**  
+- **Fast, Smooth UX with Instant Feedback**
+
+---
+
+## Getting Started
+
+### Installation Instructions
 
 ```bash
 # Step 1: Clone the repository
@@ -111,14 +111,14 @@ npm install
 npm run dev
 ```
 
-## 📸 Demo / Screenshots
+## Demo / Screenshots
 
-> 🔗 Demo link and visuals coming soon...
+> Demo link and visuals coming soon...
 > 
 
 ---
 
-## 📚 Usage Guide
+## Usage Guide
 
 Welcome to **NoobsterDSA**, your personalized CP progress tracker!
 
@@ -142,7 +142,7 @@ Welcome to **NoobsterDSA**, your personalized CP progress tracker!
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests are welcome! For major changes, please open an issue first.
 
@@ -150,7 +150,7 @@ Whether it’s improving the UI, fixing bugs, or adding features—contributions
 
 ---
 
-## 🧾 License
+## License
 
 **MIT License** – feel free to use, modify, and share.
 
@@ -164,4 +164,3 @@ Refer to the `LICENSE` file for more details.
 - Resources like Striver A2Z, TLE Eliminator, NeetCode were key motivators
 
 > NoobsterDSA is made with love to support consistency, clarity, and growth in your DSA journey.
->
