@@ -1,20 +1,27 @@
-# NoobsterDSA
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;">
 
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-
-<div>
+<div style="flex: 1; min-width: 250px;">
 
 <h1>NoobsterDSA</h1>
 
-**Track your DSA & CP progress with ease, clarity, and motivation.**
+<p><strong>Track your DSA & CP progress with ease, clarity, and motivation.</strong></p>
 
-A productivity-focused web app designed to help beginners in <strong>Data Structures & Algorithms</strong> and <strong>Competitive Programming</strong> log their <strong>daily practice</strong>, <strong>contest performance</strong>, and <strong>weekly goals</strong> — because <strong>consistency beats intensity</strong>.
+<p>
+A productivity-focused web app designed to help beginners in
+<strong>Data Structures & Algorithms</strong> and
+<strong>Competitive Programming</strong> log their
+<strong>daily practice</strong>, <strong>contest performance</strong>, and
+<strong>weekly goals</strong> — because <em>consistency beats intensity</em>.
+</p>
 
 </div>
 
-<img src="https://github.com/user-attachments/assets/e00834ab-7707-4620-b9c2-0fe9b8ff16d2" alt="NoobsterDSA Logo" width="120" />
+<div style="min-width: 150px; text-align: right;">
+  <img src="https://github.com/user-attachments/assets/e00834ab-7707-4620-b9c2-0fe9b8ff16d2" alt="NoobsterDSA Logo" width="130" />
+</div>
 
 </div>
+
 
 
 
