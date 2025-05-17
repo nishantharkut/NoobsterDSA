@@ -225,7 +225,7 @@ export function Header({
 
             <DrawerFooter className="mt-6 px-0">
               <div className="flex items-center justify-between border-t pt-4 mb-4">
-                <span className="text-base font-medium">Zen Mode {zenMode ? "(Dark)" : ""}</span>
+                <span className="text-base font-medium">Zen Mode</span>
                 <Toggle
                   aria-label="Toggle Zen Mode"
                   pressed={zenMode}
@@ -323,7 +323,7 @@ export function Header({
                       <span className="text-base">New Log</span>
                     </Button>
                     <div className="flex items-center justify-between w-full mt-4 border-t pt-4">
-                      <span className="text-base font-medium">Zen Mode {zenMode ? "(Dark)" : ""}</span>
+                      <span className="text-base font-medium">Zen Mode</span>
                       <Toggle
                         aria-label="Toggle Zen Mode"
                         pressed={zenMode}

@@ -74,47 +74,9 @@ const Index = () => {
     saveToLocalStorage("codeTemplates", templates);
   }, [templates]);
 
-  // Save zen mode preference to localStorage and update theme
+  // Save zen mode preference to localStorage
   useEffect(() => {
     localStorage.setItem("zenMode", String(zenMode));
-    
-    // Apply dark theme when zen mode is active, otherwise use system preference
-    if (zenMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      // Check for user's system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (prefersDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-  }, [zenMode]);
-
-  // Initial theme setup based on system preference and zen mode
-  useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (zenMode || prefersDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Listen for system theme changes when not in zen mode
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!zenMode) {
-        if (e.matches) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-    };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [zenMode]);
 
   // Handle creating a new log
@@ -222,7 +184,7 @@ const Index = () => {
         setActiveTab("logs");
         toast({
           title: "Zen Mode activated",
-          description: "Focus mode enabled with Logs view and dark theme.",
+          description: "Focus mode enabled with Logs view.",
         });
       }
     }
