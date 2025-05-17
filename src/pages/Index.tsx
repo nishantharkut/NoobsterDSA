@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { LogEntry, WeeklyGoal, TemplateData } from "@/types";
 import { Header, ActiveTab } from "@/components/Header";
@@ -10,9 +11,15 @@ import Analytics from "@/components/Analytics";
 import { useToast } from "@/components/ui/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { loadFromLocalStorage, saveToLocalStorage, isOfflineSupported } from "@/utils/streakTracking";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    // Try to restore last active tab from localStorage
+    const savedTab = localStorage.getItem("activeTab");
+    return (savedTab as ActiveTab) || "dashboard";
+  });
+  
   const [logs, setLogs] = useState<LogEntry[]>(() => {
     return loadFromLocalStorage("codeLogs", []);
   });
@@ -33,6 +40,12 @@ const Index = () => {
   });
   
   const { toast } = useToast();
+  const isMobile = useIsMobile();
+
+  // Save active tab to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   // Check offline support and notify user
   useEffect(() => {
@@ -63,16 +76,19 @@ const Index = () => {
     localStorage.setItem("zenMode", String(zenMode));
   }, [zenMode]);
 
+  // Handle creating a new log
   const handleCreateLog = () => {
     setEditingLog(null);
     setIsNewLogOpen(true);
   };
 
+  // Handle editing a log
   const handleEditLog = (log: LogEntry) => {
     setEditingLog(log);
     setIsNewLogOpen(true);
   };
 
+  // Handle saving a log
   const handleSaveLog = (log: LogEntry) => {
     if (editingLog) {
       setLogs(logs.map(l => l.id === log.id ? log : l));
@@ -89,6 +105,7 @@ const Index = () => {
     }
   };
 
+  // Handle deleting a log
   const handleDeleteLog = (id: string) => {
     setLogs(logs.filter(log => log.id !== id));
     toast({
@@ -98,6 +115,7 @@ const Index = () => {
     });
   };
 
+  // Handle saving a goal
   const handleSaveGoal = (goal: WeeklyGoal) => {
     const existingIndex = weeklyGoals.findIndex(g => g.id === goal.id);
     
@@ -116,6 +134,7 @@ const Index = () => {
     }
   };
 
+  // Handle deleting a goal
   const handleDeleteGoal = (id: string) => {
     setWeeklyGoals(weeklyGoals.filter(goal => goal.id !== id));
     toast({
@@ -125,6 +144,7 @@ const Index = () => {
     });
   };
 
+  // Handle saving a template
   const handleSaveTemplate = (template: TemplateData) => {
     const existingIndex = templates.findIndex(t => t.id === template.id);
     
@@ -143,6 +163,7 @@ const Index = () => {
     }
   };
 
+  // Handle deleting a template
   const handleDeleteTemplate = (id: string) => {
     setTemplates(templates.filter(template => template.id !== id));
     toast({
@@ -179,6 +200,21 @@ const Index = () => {
     setActiveTab(tab);
   };
 
+  // Calculate appropriate container class based on screen size and zen mode
+  const getContainerClass = () => {
+    let className = "flex-1 container py-6";
+    
+    if (zenMode) {
+      className += " max-w-2xl mx-auto";
+    }
+    
+    if (isMobile) {
+      className += " px-3";
+    }
+    
+    return className;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header 
@@ -189,7 +225,7 @@ const Index = () => {
         onZenModeChange={handleZenModeChange}
       />
       
-      <main className={`flex-1 container py-8 ${zenMode ? 'max-w-2xl px-4 mx-auto' : ''}`}>
+      <main className={getContainerClass()}>
         {activeTab === "dashboard" && !zenMode && (
           <Dashboard 
             logs={logs} 

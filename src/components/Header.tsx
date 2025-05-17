@@ -35,6 +35,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger
+} from "@/components/ui/drawer";
 
 export type ActiveTab = "dashboard" | "logs" | "goals" | "templates" | "analytics";
 
@@ -55,11 +61,13 @@ export function Header({
 }: HeaderProps) {
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openMobileNav, setOpenMobileNav] = useState(false);
   
   // Helper function to handle tab changes and close mobile menu
   const handleTabChange = (tab: ActiveTab) => {
     onTabChange(tab);
     setIsMenuOpen(false);
+    setOpenMobileNav(false);
   };
 
   // Map of tab labels and icons
@@ -120,71 +128,112 @@ export function Header({
     </TabsList>
   );
   
-  // Render mobile breadcrumb navigation
-  const renderMobileBreadcrumb = () => (
-    <div className="md:hidden overflow-x-auto scrollbar-none">
-      <Breadcrumb className="py-1">
-        <BreadcrumbList className="flex-nowrap">
-          {Object.entries(tabInfo).map(([key, { label, icon }]) => {
-            const isActive = activeTab === key;
-            return (
-              <BreadcrumbItem key={key} className="whitespace-nowrap">
-                <Button 
-                  variant={isActive ? "default" : "ghost"} 
-                  size="sm" 
-                  className={`flex items-center gap-1 h-8 ${isActive ? 'bg-primary' : ''}`}
-                  onClick={() => handleTabChange(key as ActiveTab)}
+  // Render mobile navigation options - now using Drawer for better mobile experience
+  const renderMobileNavigation = () => (
+    <div className="md:hidden w-full">
+      <Drawer open={openMobileNav} onOpenChange={setOpenMobileNav}>
+        <DrawerTrigger asChild>
+          <Button variant="ghost" size="sm" className="w-full my-2 flex items-center justify-between border">
+            <div className="flex items-center gap-2">
+              {tabInfo[activeTab].icon}
+              <span>{tabInfo[activeTab].label}</span>
+            </div>
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="px-4 pb-6">
+          <div className="mt-6 max-h-[70vh] overflow-y-auto">
+            <h3 className="font-semibold text-lg mb-4">Navigation</h3>
+            
+            <div className="grid grid-cols-1 gap-2">
+              {Object.entries(tabInfo).map(([key, { label, icon }]) => {
+                const isActive = activeTab === key;
+                return (
+                  <Button 
+                    key={key}
+                    variant={isActive ? "default" : "outline"} 
+                    className={`flex items-center justify-start gap-3 w-full py-6`}
+                    onClick={() => handleTabChange(key as ActiveTab)}
+                  >
+                    <span className="text-lg">{icon}</span>
+                    <span className="text-base">{label}</span>
+                  </Button>
+                );
+              })}
+            </div>
+
+            <div className="mt-6 flex flex-col gap-4">
+              <div className="flex items-center justify-between border-t pt-4">
+                <span className="text-base font-medium">Zen Mode</span>
+                <Toggle
+                  aria-label="Toggle Zen Mode"
+                  pressed={zenMode}
+                  onPressedChange={(enabled) => {
+                    onZenModeChange(enabled);
+                    setOpenMobileNav(false);
+                  }}
                 >
-                  <span className="sr-only md:not-sr-only">{icon}</span>
-                  {label}
-                </Button>
-                {key !== "analytics" && (
-                  <BreadcrumbSeparator>
-                    <ChevronRight className="h-3 w-3" />
-                  </BreadcrumbSeparator>
-                )}
-              </BreadcrumbItem>
-            );
-          })}
-        </BreadcrumbList>
-      </Breadcrumb>
+                  {zenMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Toggle>
+              </div>
+              
+              <Button 
+                onClick={() => {
+                  onCreateLog();
+                  setOpenMobileNav(false);
+                }} 
+                className="w-full flex items-center gap-2 py-6"
+              >
+                <PlusIcon className="h-5 w-5" />
+                <span className="text-base">New Log</span>
+              </Button>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 
   return (
-    <header className={`sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${zenMode ? 'py-3' : ''}`}>
-      <div className={`container flex h-14 md:h-16 items-center justify-between ${zenMode ? 'max-w-2xl' : ''}`}>
-        <div className="flex items-center gap-2">
-          <Logo size={isMobile ? 20 : 24}/>
-          <h1 className={`font-bold text-foreground ${isMobile ? "text-lg" : "text-xl"}`}>NoobsterDSA</h1>
-        </div>
+    <header className={`sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${zenMode ? 'py-2' : ''}`}>
+      <div className={`container flex flex-col h-auto md:h-16 ${zenMode ? 'max-w-2xl' : ''}`}>
+        <div className="flex items-center justify-between py-3">
+          <div className="flex items-center gap-2">
+            <Logo size={isMobile ? 24 : 24}/>
+            <h1 className="font-bold text-foreground text-lg">NoobsterDSA</h1>
+          </div>
 
-        {!zenMode && (
-          <>
-            {/* Desktop Navigation */}
-            <div className="hidden md:block flex-1 mx-4">
-              <Tabs 
-                value={activeTab} 
-                onValueChange={(v) => onTabChange(v as ActiveTab)} 
-                className="w-full flex justify-center"
-              >
-                {renderTabContent()}
-              </Tabs>
-            </div>
+          <div className="flex items-center gap-2">
+            <Toggle
+              aria-label="Toggle Zen Mode"
+              pressed={zenMode}
+              onPressedChange={onZenModeChange}
+              className={isMobile ? "h-9 w-9 p-0" : "mr-2"}
+              size={isMobile ? "sm" : "default"}
+            >
+              {zenMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Toggle>
             
-            {/* Mobile Breadcrumb Navigation - shown below header */}
-            {isMobile && renderMobileBreadcrumb()}
+            <Button 
+              onClick={onCreateLog} 
+              size={isMobile ? "sm" : "default"}
+              className="flex items-center gap-1"
+            >
+              <PlusIcon className="h-4 w-4" />
+              {(!isMobile || zenMode) && (
+                <span>{zenMode ? "New Entry" : "New Log"}</span>
+              )}
+            </Button>
 
-            {/* Mobile Menu Button */}
-            {isMobile && (
+            {isMobile && !zenMode && (
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="sm" className="md:hidden px-1">
-                    <Menu className="h-5 w-5" />
+                  <Button variant="outline" size="icon" className="md:hidden ml-1">
+                    <Menu className="h-[1.2rem] w-[1.2rem]" />
                     <span className="sr-only">Toggle menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-[80vw] sm:w-[300px]">
+                <SheetContent side="right" className="w-[85vw] sm:w-[300px]">
                   <SheetHeader className="mb-6">
                     <SheetTitle className="flex items-center gap-2">
                       <Logo size={20} />
@@ -207,13 +256,13 @@ export function Header({
                         onCreateLog();
                         setIsMenuOpen(false);
                       }} 
-                      className="w-full flex items-center gap-1 justify-center"
+                      className="w-full flex items-center gap-1 justify-center py-6"
                     >
-                      <PlusIcon className="h-4 w-4" />
-                      <span>New Log</span>
+                      <PlusIcon className="h-5 w-5" />
+                      <span className="text-base">New Log</span>
                     </Button>
-                    <div className="flex items-center justify-between w-full mt-4">
-                      <span className="text-sm text-muted-foreground">Zen Mode</span>
+                    <div className="flex items-center justify-between w-full mt-4 border-t pt-4">
+                      <span className="text-base font-medium">Zen Mode</span>
                       <Toggle
                         aria-label="Toggle Zen Mode"
                         pressed={zenMode}
@@ -226,40 +275,30 @@ export function Header({
                         {zenMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                       </Toggle>
                     </div>
-                    <SheetClose asChild>
-                      <Button variant="outline" className="w-full mt-4">
-                        Close Menu
-                      </Button>
-                    </SheetClose>
                   </SheetFooter>
                 </SheetContent>
               </Sheet>
             )}
+          </div>
+        </div>
+        
+        {!zenMode && (
+          <>
+            {/* Desktop Navigation */}
+            <div className="hidden md:block flex-1 my-2">
+              <Tabs 
+                value={activeTab} 
+                onValueChange={(v) => onTabChange(v as ActiveTab)} 
+                className="w-full flex justify-center"
+              >
+                {renderTabContent()}
+              </Tabs>
+            </div>
+            
+            {/* Mobile Drawer Navigation - more touchscreen friendly for mobile */}
+            {isMobile && renderMobileNavigation()}
           </>
         )}
-
-        <div className="flex items-center gap-2">
-          <Toggle
-            aria-label="Toggle Zen Mode"
-            pressed={zenMode}
-            onPressedChange={onZenModeChange}
-            className={isMobile ? "h-8 w-8 p-0" : "mr-2"}
-            size={isMobile ? "sm" : "default"}
-          >
-            {zenMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Toggle>
-          
-          <Button 
-            onClick={onCreateLog} 
-            size={isMobile ? "sm" : "default"}
-            className="flex items-center gap-1"
-          >
-            <PlusIcon className="h-4 w-4" />
-            {(!isMobile || zenMode) && (
-              <span>{zenMode ? "New Entry" : "New Log"}</span>
-            )}
-          </Button>
-        </div>
       </div>
     </header>
   );
