@@ -1,189 +1,73 @@
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;">
+# Welcome to your Lovable project
 
-<div style="flex: 1; min-width: 250px;">
+## Project info
 
-<h1>NoobsterDSA</h1>
+**URL**: https://lovable.dev/projects/a6225d0a-d38e-4bf3-b383-f7fcade178ef
 
-<p><strong>Track your DSA & CP progress with ease, clarity, and motivation.</strong></p>
+## How can I edit this code?
 
-<p>
-A productivity-focused web app designed to help beginners in
-<strong>Data Structures & Algorithms</strong> and
-<strong>Competitive Programming</strong> log their
-<strong>daily practice</strong>, <strong>contest performance</strong>, and
-<strong>weekly goals</strong> — because <em>consistency beats intensity</em>.
-</p>
+There are several ways of editing your application.
 
-</div>
+**Use Lovable**
 
-<div style="min-width: 150px; text-align: right;">
-  <img src="https://github.com/user-attachments/assets/e00834ab-7707-4620-b9c2-0fe9b8ff16d2" alt="NoobsterDSA Logo" width="130" />
-</div>
+Simply visit the [Lovable Project](https://lovable.dev/projects/a6225d0a-d38e-4bf3-b383-f7fcade178ef) and start prompting.
 
-</div>
+Changes made via Lovable will be committed automatically to this repo.
 
+**Use your preferred IDE**
 
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
+Follow these steps:
 
----
-
-## Project Description
-
-Every DSA beginner struggles with scattered resources—Striver’s A2Z, TLE Eliminator, NeetCode, and many more—making it hard to track progress in one place.  
-That’s why I built **NoobsterDSA**: a centralized logging and analytics platform tailored for the CP community to monitor:
-
-- Daily Practice Logs
-- Contest Performances
-- Weekly Goals & Reflections
-
-All with rich metadata support, auto-tagging, smart summaries, and a clean, gamified UI.
-
----
-
-## Tech Stack
-
-| Layer        | Technologies Used                                                                 |
-|--------------|------------------------------------------------------------------------------------|
-| **Frontend** | React (TypeScript), Vite, Tailwind CSS, shadcn/ui, Radix UI, lucide-react         |
-| **Backend**  | Supabase (BaaS)                                                                   |
-| **Database** | PostgreSQL (via Supabase)                                                         |
-| **Auth**     | Supabase Auth *(planned)*                                                         |
-| **Deployment** | Vercel                                                                         |
-| **Other**    | PWA Support *(offline capability)*, Responsive Design                             |
-
----
-
-## Features
-
-### Core Functional Features
-
-- **🗓️ Daily Logging System**  
-  Log: Date, Topic, #Problems Solved, Platform, Difficulty, Time, Notes, Resources, Next Steps
-
-- **🏁 Contest Tracking**  
-  Track: Platform, Rank, Time, Mistakes, Learnings
-
-- **🗂️ Weekly Goals & Reviews**  
-  Set and reflect on weekly targets, progress, and blockers
-
----
-
-### UI/UX Enhancements
-
-- **Color-Coded Tags & Icons** – for topics, difficulty, and platforms  
-- **Filtering & Sorting** – by topic, platform, date, difficulty  
-- **Zen Mode** – distraction-free logging  
-- **Clean Tech-Themed UI** – with smooth animations and responsiveness
-
----
-
-### Analytics & Insights
-
-- **Weekly/Monthly Summaries**  
-- **Topic Proficiency Tracker**  
-- **Visual Dashboards**  
-- **Heatmaps for Consistency**  
-- **Time Distribution & Mastery Charts**  
-- **Focus Suggestions Based on Logs**
-
----
-
-### Advanced Functionalities
-
-- **Auto-tagging from Problem URLs**  
-  Auto-fill difficulty and platform when pasting LeetCode, Codeforces links
-
-- **Markdown-enabled Notes**  
-- **Habit-Driven Weekly Planner**  
-- **Smart Defaults & Custom Templates**
-
----
-
-### Customization & Gamification
-
-- **Badges & Milestones**  
-- **Streak Tracking**  
-- **Custom Templates for Logs, Interviews, Reviews**
-
----
-
-### Technical Features
-
-- **PWA Support** – Use offline  
-- **Mobile + Desktop Responsive**  
-- **Fast, Smooth UX with Instant Feedback**
-
----
-
-## Getting Started
-
-### Installation Instructions
-
-```bash
-# Step 1: Clone the repository
+```sh
+# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate into the directory
+# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install dependencies
-npm install
+# Step 3: Install the necessary dependencies.
+npm i
 
-# Step 4: Start the development server
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-## Demo / Screenshots
+**Edit a file directly in GitHub**
 
-> Demo link and visuals coming soon...
-> 
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
----
+**Use GitHub Codespaces**
 
-## Usage Guide
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-Welcome to **NoobsterDSA**, your personalized CP progress tracker!
+## What technologies are used for this project?
 
-1. **Sign Up** with your email or GitHub/Google (coming soon).
-2. **Set Weekly Goals** – define your focus areas, target problem count, and contests.
-3. **Log Daily Practice**
-    
-    Include: Date, Topic, Platform, Difficulty, Time, Notes, and Resources.
-    
-    ➕ Paste problem URLs for automatic platform/difficulty tagging.
-    
-4. **Track Contests** – rank, attempts, time, learnings.
-5. **View Dashboard**
-    
-    Explore heatmaps, progress graphs, topic distribution, time logs.
-    
-6. **Reflect Weekly** – analyze blockers, adjust strategies.
-7. **Earn Badges** and maintain **streaks** with smart reminders.
+This project is built with:
 
-📴 Prefer minimal distractions? Switch to **Zen Mode** for focused entries.
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
----
+## How can I deploy this project?
 
-## Contributing
+Simply open [Lovable](https://lovable.dev/projects/a6225d0a-d38e-4bf3-b383-f7fcade178ef) and click on Share -> Publish.
 
-Pull requests are welcome! For major changes, please open an issue first.
+## Can I connect a custom domain to my Lovable project?
 
-Whether it’s improving the UI, fixing bugs, or adding features—contributions of all sizes are appreciated.
+Yes, you can!
 
----
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-## License
-
-**MIT License** – feel free to use, modify, and share.
-
-Refer to the `LICENSE` file for more details.
-
----
-
-## 🙌 Special Thanks
-
-- Inspired by common struggles of early DSA learners
-- Resources like Striver A2Z, TLE Eliminator, NeetCode were key motivators
-
-> NoobsterDSA is made with love to support consistency, clarity, and growth in your DSA journey.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
