@@ -1,21 +1,21 @@
 # NoobsterDSA
 
-<table>
-  <tr>
-    <td>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+
+<div>
 
 <h1>NoobsterDSA</h1>
 
-**Track your DSA & CP progress with ease, clarity, and motivation.**  
+**Track your DSA & CP progress with ease, clarity, and motivation.**
 
-A productivity-focused web app designed to help beginners in **Data Structures & Algorithms** and **Competitive Programming** log their **daily practice**, **contest performance**, and **weekly goals**—because **consistency beats intensity**.
+A productivity-focused web app designed to help beginners in <strong>Data Structures & Algorithms</strong> and <strong>Competitive Programming</strong> log their <strong>daily practice</strong>, <strong>contest performance</strong>, and <strong>weekly goals</strong> — because <strong>consistency beats intensity</strong>.
 
-  </td>
-  <td align="right" width="200">
-    <img src="https://github.com/user-attachments/assets/e00834ab-7707-4620-b9c2-0fe9b8ff16d2" alt="NoobsterDSA Logo" width="120" />
-  </td>
-  </tr>
-</table>
+</div>
+
+<img src="https://github.com/user-attachments/assets/e00834ab-7707-4620-b9c2-0fe9b8ff16d2" alt="NoobsterDSA Logo" width="120" />
+
+</div>
+
 
 
 
