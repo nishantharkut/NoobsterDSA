@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import {
@@ -13,7 +13,8 @@ import {
   Sun,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Home
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toggle } from "@/components/ui/toggle";
@@ -32,13 +33,16 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
   DrawerTrigger
 } from "@/components/ui/drawer";
 
@@ -72,7 +76,7 @@ export function Header({
 
   // Map of tab labels and icons
   const tabInfo = {
-    dashboard: { label: "Dashboard", icon: <TrendingUpIcon className="h-4 w-4" /> },
+    dashboard: { label: "Dashboard", icon: <Home className="h-4 w-4" /> },
     logs: { label: "Logs", icon: <ListIcon className="h-4 w-4" /> },
     goals: { label: "Weekly Goals", icon: <Flag className="h-4 w-4" /> },
     templates: { label: "Templates", icon: <CalendarIcon className="h-4 w-4" /> },
@@ -128,7 +132,61 @@ export function Header({
     </TabsList>
   );
   
-  // Render mobile navigation options - now using Drawer for better mobile experience
+  // Render breadcrumb navigation for mobile
+  const renderBreadcrumbNav = () => (
+    <div className="w-full px-1 my-2">
+      <Breadcrumb className="overflow-hidden">
+        <BreadcrumbList className="flex-wrap">
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "dashboard" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("dashboard")}
+            >
+              {tabInfo.dashboard.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "logs" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("logs")}
+            >
+              {tabInfo.logs.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "goals" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("goals")}
+            >
+              {tabInfo.goals.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "templates" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("templates")}
+            >
+              {tabInfo.templates.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "analytics" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("analytics")}
+            >
+              {tabInfo.analytics.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </div>
+  );
+  
+  // Render mobile navigation using Drawer component
   const renderMobileNavigation = () => (
     <div className="md:hidden w-full">
       <Drawer open={openMobileNav} onOpenChange={setOpenMobileNav}>
@@ -141,10 +199,13 @@ export function Header({
             <ChevronRight className="h-4 w-4 ml-2" />
           </Button>
         </DrawerTrigger>
-        <DrawerContent className="px-4 pb-6">
-          <div className="mt-6 max-h-[70vh] overflow-y-auto">
-            <h3 className="font-semibold text-lg mb-4">Navigation</h3>
-            
+        <DrawerContent className="px-4 pb-6 focus-visible:outline-none">
+          <DrawerHeader className="text-left pt-6">
+            <DrawerTitle>Navigation</DrawerTitle>
+            <DrawerDescription>Switch between different views</DrawerDescription>
+          </DrawerHeader>
+          
+          <div className="max-h-[70vh] overflow-y-auto">
             <div className="grid grid-cols-1 gap-2">
               {Object.entries(tabInfo).map(([key, { label, icon }]) => {
                 const isActive = activeTab === key;
@@ -162,8 +223,8 @@ export function Header({
               })}
             </div>
 
-            <div className="mt-6 flex flex-col gap-4">
-              <div className="flex items-center justify-between border-t pt-4">
+            <DrawerFooter className="mt-6 px-0">
+              <div className="flex items-center justify-between border-t pt-4 mb-4">
                 <span className="text-base font-medium">Zen Mode</span>
                 <Toggle
                   aria-label="Toggle Zen Mode"
@@ -187,7 +248,7 @@ export function Header({
                 <PlusIcon className="h-5 w-5" />
                 <span className="text-base">New Log</span>
               </Button>
-            </div>
+            </DrawerFooter>
           </div>
         </DrawerContent>
       </Drawer>
@@ -295,7 +356,10 @@ export function Header({
               </Tabs>
             </div>
             
-            {/* Mobile Drawer Navigation - more touchscreen friendly for mobile */}
+            {/* Mobile icon-based breadcrumb navigation */}
+            {isMobile && renderBreadcrumbNav()}
+            
+            {/* Mobile drawer-based navigation for full details */}
             {isMobile && renderMobileNavigation()}
           </>
         )}

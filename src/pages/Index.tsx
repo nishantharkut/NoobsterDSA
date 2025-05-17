@@ -11,15 +11,19 @@ import Analytics from "@/components/Analytics";
 import { useToast } from "@/components/ui/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { loadFromLocalStorage, saveToLocalStorage, isOfflineSupported } from "@/utils/streakTracking";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useResponsive } from "@/hooks/use-mobile";
 
 const Index = () => {
+  // Get responsive state for adaptive layouts
+  const { isMobile, isTablet } = useResponsive();
+  
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     // Try to restore last active tab from localStorage
     const savedTab = localStorage.getItem("activeTab");
     return (savedTab as ActiveTab) || "dashboard";
   });
   
+  // Initialize state with data from localStorage
   const [logs, setLogs] = useState<LogEntry[]>(() => {
     return loadFromLocalStorage("codeLogs", []);
   });
@@ -40,7 +44,6 @@ const Index = () => {
   });
   
   const { toast } = useToast();
-  const isMobile = useIsMobile();
 
   // Save active tab to localStorage whenever it changes
   useEffect(() => {
@@ -202,14 +205,14 @@ const Index = () => {
 
   // Calculate appropriate container class based on screen size and zen mode
   const getContainerClass = () => {
-    let className = "flex-1 container py-6";
+    let className = "flex-1 container py-4 md:py-6";
     
     if (zenMode) {
       className += " max-w-2xl mx-auto";
     }
     
     if (isMobile) {
-      className += " px-3";
+      className += " px-2";
     }
     
     return className;

@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +15,7 @@ interface DailyLogFormProps {
   onSave: (log: LogEntry) => void;
   templates?: TemplateData[];
   initialData?: Partial<LogEntry>;
-  zenMode?: boolean; // Added missing prop
+  zenMode?: boolean;
 }
 
 export default function DailyLogForm({ 
@@ -25,7 +24,7 @@ export default function DailyLogForm({
   onSave,
   templates = [],
   initialData = {},
-  zenMode = false // Added default value
+  zenMode = false
 }: DailyLogFormProps) {
   const [formData, setFormData] = useState<Partial<LogEntry>>({
     id: initialData.id || uuidv4(),
@@ -92,6 +91,9 @@ export default function DailyLogForm({
       <DialogContent className={`${zenMode ? 'max-w-2xl' : 'max-w-3xl'} max-h-[90vh] overflow-y-auto`}>
         <DialogHeader>
           <DialogTitle>{zenMode ? 'New Entry' : 'Create New Progress Log'}</DialogTitle>
+          <DialogDescription>
+            {zenMode ? 'Add a quick entry to your coding journal' : 'Log your coding progress and track your journey'}
+          </DialogDescription>
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">

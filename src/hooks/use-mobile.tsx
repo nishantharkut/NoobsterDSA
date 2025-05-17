@@ -1,19 +1,28 @@
 
 import * as React from "react"
 
-const MOBILE_BREAKPOINT = 768
+// Defined breakpoints for consistent use across app
+export const BREAKPOINTS = {
+  MOBILE: 768,
+  TABLET: 1024,
+  DESKTOP: 1280
+}
 
+/**
+ * Hook to detect if the current viewport is mobile-sized
+ * Uses a debounced resize event for performance
+ */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean>(() => {
     // Default to mobile for SSR
     if (typeof window === 'undefined') return true;
-    return window.innerWidth < MOBILE_BREAKPOINT;
+    return window.innerWidth < BREAKPOINTS.MOBILE;
   })
 
   React.useEffect(() => {
     // Initial check
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+      setIsMobile(window.innerWidth < BREAKPOINTS.MOBILE)
     }
     
     checkIfMobile()
@@ -39,6 +48,10 @@ export function useIsMobile() {
   return isMobile
 }
 
+/**
+ * Hook to check if viewport is below a specific breakpoint
+ * @param breakpoint - Width in pixels to check against
+ */
 export function useBreakpoint(breakpoint: number) {
   const [isBelow, setIsBelow] = React.useState<boolean>(() => {
     // Default to below for SSR
@@ -71,4 +84,23 @@ export function useBreakpoint(breakpoint: number) {
   }, [breakpoint])
 
   return isBelow
+}
+
+/**
+ * Hook that provides multiple breakpoints at once for responsive design
+ * @returns Object containing boolean values for different breakpoints
+ */
+export function useResponsive() {
+  const isMobile = useBreakpoint(BREAKPOINTS.MOBILE);
+  const isTablet = useBreakpoint(BREAKPOINTS.TABLET);
+  const isDesktop = useBreakpoint(BREAKPOINTS.DESKTOP);
+  
+  return {
+    isMobile,
+    isTablet,
+    isDesktop,
+    // Derived values for ease of use
+    isTabletOnly: !isMobile && isTablet,
+    isDesktopAndAbove: !isDesktop
+  };
 }
