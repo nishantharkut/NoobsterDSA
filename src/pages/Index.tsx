@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { LogEntry, WeeklyGoal, TemplateData } from "@/types";
 import { Header, ActiveTab } from "@/components/Header";
@@ -28,7 +27,10 @@ const Index = () => {
 
   const [isNewLogOpen, setIsNewLogOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
-  const [zenMode, setZenMode] = useState(false);
+  const [zenMode, setZenMode] = useState(() => {
+    // Load zen mode preference from localStorage
+    return localStorage.getItem("zenMode") === "true";
+  });
   
   const { toast } = useToast();
 
@@ -55,6 +57,11 @@ const Index = () => {
   useEffect(() => {
     saveToLocalStorage("codeTemplates", templates);
   }, [templates]);
+
+  // Save zen mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem("zenMode", String(zenMode));
+  }, [zenMode]);
 
   const handleCreateLog = () => {
     setEditingLog(null);
@@ -148,22 +155,41 @@ const Index = () => {
   const handleZenModeChange = (enabled: boolean) => {
     setZenMode(enabled);
     if (enabled) {
-      // If entering zen mode, automatically go to logs tab
-      setActiveTab("logs");
+      // If entering zen mode, automatically go to logs tab if not already there
+      if (activeTab !== "logs") {
+        setActiveTab("logs");
+        toast({
+          title: "Zen Mode activated",
+          description: "Focus mode enabled with Logs view.",
+        });
+      }
     }
+  };
+
+  // Retrieve previously active tab when exiting zen mode
+  const handleTabChange = (tab: ActiveTab) => {
+    // Only allow logs tab in zen mode
+    if (zenMode && tab !== "logs") {
+      setZenMode(false);
+      toast({
+        title: "Zen Mode deactivated",
+        description: `Switching to ${tab} view.`,
+      });
+    }
+    setActiveTab(tab);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header 
         activeTab={activeTab} 
-        onTabChange={setActiveTab} 
+        onTabChange={handleTabChange} 
         onCreateLog={handleCreateLog}
         zenMode={zenMode}
         onZenModeChange={handleZenModeChange}
       />
       
-      <main className={`flex-1 container py-8 ${zenMode ? 'max-w-2xl' : ''}`}>
+      <main className={`flex-1 container py-8 ${zenMode ? 'max-w-2xl px-4 mx-auto' : ''}`}>
         {activeTab === "dashboard" && !zenMode && (
           <Dashboard 
             logs={logs} 

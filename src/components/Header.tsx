@@ -12,7 +12,8 @@ import {
   Moon,
   Sun,
   Menu,
-  X
+  X,
+  ChevronRight
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toggle } from "@/components/ui/toggle";
@@ -26,6 +27,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export type ActiveTab = "dashboard" | "logs" | "goals" | "templates" | "analytics";
 
@@ -52,6 +61,15 @@ export function Header({
     onTabChange(tab);
     setIsMenuOpen(false);
   };
+
+  // Map of tab labels and icons
+  const tabInfo = {
+    dashboard: { label: "Dashboard", icon: <TrendingUpIcon className="h-4 w-4" /> },
+    logs: { label: "Logs", icon: <ListIcon className="h-4 w-4" /> },
+    goals: { label: "Weekly Goals", icon: <Flag className="h-4 w-4" /> },
+    templates: { label: "Templates", icon: <CalendarIcon className="h-4 w-4" /> },
+    analytics: { label: "Analytics", icon: <LayoutGrid className="h-4 w-4" /> }
+  };
   
   const renderTabContent = (orientation: "horizontal" | "vertical" = "horizontal") => (
     <TabsList 
@@ -64,7 +82,7 @@ export function Header({
         className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : ""}`}
         onClick={() => handleTabChange("dashboard")}
       >
-        <TrendingUpIcon className="h-4 w-4" />
+        {tabInfo.dashboard.icon}
         <span>Dashboard</span>
       </TabsTrigger>
       <TabsTrigger 
@@ -72,7 +90,7 @@ export function Header({
         className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
         onClick={() => handleTabChange("logs")}
       >
-        <ListIcon className="h-4 w-4" />
+        {tabInfo.logs.icon}
         <span>Logs</span>
       </TabsTrigger>
       <TabsTrigger 
@@ -80,7 +98,7 @@ export function Header({
         className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
         onClick={() => handleTabChange("goals")}
       >
-        <Flag className="h-4 w-4" />
+        {tabInfo.goals.icon}
         <span>Weekly Goals</span>
       </TabsTrigger>
       <TabsTrigger 
@@ -88,7 +106,7 @@ export function Header({
         className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
         onClick={() => handleTabChange("templates")}
       >
-        <CalendarIcon className="h-4 w-4" />
+        {tabInfo.templates.icon}
         <span>Templates</span>
       </TabsTrigger>
       <TabsTrigger 
@@ -96,10 +114,41 @@ export function Header({
         className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
         onClick={() => handleTabChange("analytics")}
       >
-        <LayoutGrid className="h-4 w-4" />
+        {tabInfo.analytics.icon}
         <span>Analytics</span>
       </TabsTrigger>
     </TabsList>
+  );
+  
+  // Render mobile breadcrumb navigation
+  const renderMobileBreadcrumb = () => (
+    <div className="md:hidden overflow-x-auto scrollbar-none">
+      <Breadcrumb className="py-1">
+        <BreadcrumbList className="flex-nowrap">
+          {Object.entries(tabInfo).map(([key, { label, icon }]) => {
+            const isActive = activeTab === key;
+            return (
+              <BreadcrumbItem key={key} className="whitespace-nowrap">
+                <Button 
+                  variant={isActive ? "default" : "ghost"} 
+                  size="sm" 
+                  className={`flex items-center gap-1 h-8 ${isActive ? 'bg-primary' : ''}`}
+                  onClick={() => handleTabChange(key as ActiveTab)}
+                >
+                  <span className="sr-only md:not-sr-only">{icon}</span>
+                  {label}
+                </Button>
+                {key !== "analytics" && (
+                  <BreadcrumbSeparator>
+                    <ChevronRight className="h-3 w-3" />
+                  </BreadcrumbSeparator>
+                )}
+              </BreadcrumbItem>
+            );
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+    </div>
   );
 
   return (
@@ -123,7 +172,10 @@ export function Header({
               </Tabs>
             </div>
             
-            {/* Mobile Navigation */}
+            {/* Mobile Breadcrumb Navigation - shown below header */}
+            {isMobile && renderMobileBreadcrumb()}
+
+            {/* Mobile Menu Button */}
             {isMobile && (
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
@@ -160,8 +212,22 @@ export function Header({
                       <PlusIcon className="h-4 w-4" />
                       <span>New Log</span>
                     </Button>
+                    <div className="flex items-center justify-between w-full mt-4">
+                      <span className="text-sm text-muted-foreground">Zen Mode</span>
+                      <Toggle
+                        aria-label="Toggle Zen Mode"
+                        pressed={zenMode}
+                        onPressedChange={(enabled) => {
+                          onZenModeChange(enabled);
+                          setIsMenuOpen(false);
+                        }}
+                        size="sm"
+                      >
+                        {zenMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                      </Toggle>
+                    </div>
                     <SheetClose asChild>
-                      <Button variant="outline" className="w-full mt-2">
+                      <Button variant="outline" className="w-full mt-4">
                         Close Menu
                       </Button>
                     </SheetClose>
