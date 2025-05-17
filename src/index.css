@@ -103,6 +103,11 @@
     --teal: 185 84% 47%;
     --teal-foreground: 210 40% 98%;
   }
+
+  /* Add theme transition */
+  html {
+    @apply transition-colors duration-300;
+  }
 }
 
 @layer base {
@@ -111,7 +116,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans animate-theme-fade;
   }
 
   h1, h2, h3, h4, h5, h6 {
