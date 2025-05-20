@@ -1,15 +1,52 @@
 
 import { useState, useEffect } from "react";
-import { Moon, Sun, Menu, X, PanelRight, Home, LineChart, ListTodo, FileText, Layers, BookOpen, FileArchive, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Switch } from "@/components/ui/switch";
-import { Drawer } from "vaul";
-import { useResponsive } from "@/hooks/use-mobile";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/logo";
+import {
+  PlusIcon, 
+  CalendarIcon, 
+  TrendingUpIcon,
+  ListIcon,
+  Flag,
+  LayoutGrid,
+  Moon,
+  Sun,
+  Menu,
+  X,
+  ChevronRight,
+  Home
+} from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Toggle } from "@/components/ui/toggle";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger
+} from "@/components/ui/drawer";
 
-export type ActiveTab = "dashboard" | "logs" | "goals" | "templates" | "analytics" | "applications";
+export type ActiveTab = "dashboard" | "logs" | "goals" | "templates" | "analytics";
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -19,274 +56,314 @@ interface HeaderProps {
   onZenModeChange: (enabled: boolean) => void;
 }
 
-const tabsConfig = [
-  { id: "dashboard", label: "Dashboard", icon: Home },
-  { id: "logs", label: "Logs", icon: FileText },
-  { id: "goals", label: "Goals", icon: ListTodo },
-  { id: "templates", label: "Templates", icon: Layers },
-  { id: "analytics", label: "Analytics", icon: LineChart },
-  { id: "applications", label: "Applications", icon: Briefcase }
-];
-
-export const Header = ({
-  activeTab,
-  onTabChange,
-  onCreateLog,
-  zenMode,
-  onZenModeChange
-}: HeaderProps) => {
-  const { isMobile, isTablet } = useResponsive();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const location = useLocation();
+export function Header({ 
+  activeTab, 
+  onTabChange, 
+  onCreateLog, 
+  zenMode, 
+  onZenModeChange 
+}: HeaderProps) {
+  const isMobile = useIsMobile();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openMobileNav, setOpenMobileNav] = useState(false);
   
-  // Initialize dark mode from localStorage or zen mode setting
-  useEffect(() => {
-    const storedDarkMode = localStorage.getItem("darkMode") === "true";
-    setIsDarkMode(storedDarkMode || zenMode);
-    
-    if (storedDarkMode || zenMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [zenMode]);
-  
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", String(newDarkMode));
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
-  
-  // Link zen mode to dark mode
-  useEffect(() => {
-    if (zenMode && !isDarkMode) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
-    }
-  }, [zenMode, isDarkMode]);
-  
-  // Handle zen mode toggle
-  const handleZenModeToggle = (enabled: boolean) => {
-    onZenModeChange(enabled);
-    if (enabled) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
-    }
+  // Helper function to handle tab changes and close mobile menu
+  const handleTabChange = (tab: ActiveTab) => {
+    onTabChange(tab);
+    setIsMenuOpen(false);
+    setOpenMobileNav(false);
   };
 
-  const isDrawerNeeded = zenMode || activeTab === "logs";
+  // Map of tab labels and icons
+  const tabInfo = {
+    dashboard: { label: "Dashboard", icon: <Home className="h-4 w-4" /> },
+    logs: { label: "Logs", icon: <ListIcon className="h-4 w-4" /> },
+    goals: { label: "Weekly Goals", icon: <Flag className="h-4 w-4" /> },
+    templates: { label: "Templates", icon: <CalendarIcon className="h-4 w-4" /> },
+    analytics: { label: "Analytics", icon: <LayoutGrid className="h-4 w-4" /> }
+  };
   
-  // Is the current location the application tracker page?
-  const isApplicationPage = location.pathname === "/applications";
-
-  const HeaderContent = () => (
-    <>
-      <div className="flex items-center">
-        <div className="mr-2 lg:hidden">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="h-5 w-5" />
+  const renderTabContent = (orientation: "horizontal" | "vertical" = "horizontal") => (
+    <TabsList 
+      className={`${orientation === "vertical" 
+        ? "flex-col items-stretch space-y-1 w-full" 
+        : "w-full md:w-auto flex-wrap"}`}
+    >
+      <TabsTrigger 
+        value="dashboard" 
+        className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : ""}`}
+        onClick={() => handleTabChange("dashboard")}
+      >
+        {tabInfo.dashboard.icon}
+        <span>Dashboard</span>
+      </TabsTrigger>
+      <TabsTrigger 
+        value="logs" 
+        className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
+        onClick={() => handleTabChange("logs")}
+      >
+        {tabInfo.logs.icon}
+        <span>Logs</span>
+      </TabsTrigger>
+      <TabsTrigger 
+        value="goals" 
+        className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
+        onClick={() => handleTabChange("goals")}
+      >
+        {tabInfo.goals.icon}
+        <span>Weekly Goals</span>
+      </TabsTrigger>
+      <TabsTrigger 
+        value="templates" 
+        className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
+        onClick={() => handleTabChange("templates")}
+      >
+        {tabInfo.templates.icon}
+        <span>Templates</span>
+      </TabsTrigger>
+      <TabsTrigger 
+        value="analytics" 
+        className={`flex gap-1 items-center justify-start ${orientation === "vertical" ? "px-3 py-2" : "mt-0"}`}
+        onClick={() => handleTabChange("analytics")}
+      >
+        {tabInfo.analytics.icon}
+        <span>Analytics</span>
+      </TabsTrigger>
+    </TabsList>
+  );
+  
+  // Render breadcrumb navigation for mobile
+  const renderBreadcrumbNav = () => (
+    <div className="w-full px-1 my-2">
+      <Breadcrumb className="overflow-hidden">
+        <BreadcrumbList className="flex-wrap">
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "dashboard" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("dashboard")}
+            >
+              {tabInfo.dashboard.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "logs" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("logs")}
+            >
+              {tabInfo.logs.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "goals" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("goals")}
+            >
+              {tabInfo.goals.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "templates" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("templates")}
+            >
+              {tabInfo.templates.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="text-sm">
+            <BreadcrumbLink 
+              className={activeTab === "analytics" ? "font-medium text-primary" : ""} 
+              onClick={() => handleTabChange("analytics")}
+            >
+              {tabInfo.analytics.icon}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </div>
+  );
+  
+  // Render mobile navigation using Drawer component
+  const renderMobileNavigation = () => (
+    <div className="md:hidden w-full">
+      <Drawer open={openMobileNav} onOpenChange={setOpenMobileNav}>
+        <DrawerTrigger asChild>
+          <Button variant="ghost" size="sm" className="w-full my-2 flex items-center justify-between border">
+            <div className="flex items-center gap-2">
+              {tabInfo[activeTab].icon}
+              <span>{tabInfo[activeTab].label}</span>
+            </div>
+            <ChevronRight className="h-4 w-4 ml-2" />
           </Button>
-        </div>
-        
-        <div className="flex items-center space-x-1">
-          <BookOpen className="h-5 w-5 mr-1 text-primary" />
-          <h1 className="text-lg font-bold">CodeGrowth</h1>
-        </div>
-        
-        <div className="hidden lg:flex ml-6 space-x-1 transition-all">
-          {tabsConfig.map(tab => {
-            const isApp = tab.id === "applications";
-            const isActive = isApp ? isApplicationPage : activeTab === tab.id;
-            
-            return isApp ? (
-              <Button
-                key={tab.id}
-                variant={isActive ? "default" : "ghost"}
-                size="sm"
-                asChild
-                className="transition-colors"
-              >
-                <Link to="/applications">
-                  <tab.icon className="h-4 w-4 mr-2" />
-                  {tab.label}
-                </Link>
-              </Button>
-            ) : (
-              <Button
-                key={tab.id}
-                variant={isActive ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onTabChange(tab.id as ActiveTab)}
-                className="transition-colors"
-              >
-                <tab.icon className="h-4 w-4 mr-2" />
-                {tab.label}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
+        </DrawerTrigger>
+        <DrawerContent className="px-4 pb-6 focus-visible:outline-none">
+          <DrawerHeader className="text-left pt-6">
+            <DrawerTitle>Navigation</DrawerTitle>
+            <DrawerDescription>Switch between different views</DrawerDescription>
+          </DrawerHeader>
+          
+          <div className="max-h-[70vh] overflow-y-auto">
+            <div className="grid grid-cols-1 gap-2">
+              {Object.entries(tabInfo).map(([key, { label, icon }]) => {
+                const isActive = activeTab === key;
+                return (
+                  <Button 
+                    key={key}
+                    variant={isActive ? "default" : "outline"} 
+                    className={`flex items-center justify-start gap-3 w-full py-6`}
+                    onClick={() => handleTabChange(key as ActiveTab)}
+                  >
+                    <span className="text-lg">{icon}</span>
+                    <span className="text-base">{label}</span>
+                  </Button>
+                );
+              })}
+            </div>
 
-      <div className="flex items-center space-x-2">
-        <div className="hidden md:flex items-center space-x-2 mr-2">
-          <div className="text-sm">
-            {isDarkMode ? (
-              <Moon className="h-4 w-4" />
-            ) : (
-              <Sun className="h-4 w-4" />
+            <DrawerFooter className="mt-6 px-0">
+              <div className="flex items-center justify-between border-t pt-4 mb-4">
+                <span className="text-base font-medium">Zen Mode</span>
+                <Toggle
+                  aria-label="Toggle Zen Mode"
+                  pressed={zenMode}
+                  onPressedChange={(enabled) => {
+                    onZenModeChange(enabled);
+                    setOpenMobileNav(false);
+                  }}
+                >
+                  {zenMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Toggle>
+              </div>
+              
+              <Button 
+                onClick={() => {
+                  onCreateLog();
+                  setOpenMobileNav(false);
+                }} 
+                className="w-full flex items-center gap-2 py-6"
+              >
+                <PlusIcon className="h-5 w-5" />
+                <span className="text-base">New Log</span>
+              </Button>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </div>
+  );
+
+  return (
+    <header className={`sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${zenMode ? 'py-2' : ''}`}>
+      <div className={`container flex flex-col h-auto md:h-16 ${zenMode ? 'max-w-2xl' : ''}`}>
+        <div className="flex items-center justify-between py-3">
+          <div className="flex items-center gap-2">
+            <Logo size={isMobile ? 24 : 24}/>
+            <h1 className="font-bold text-foreground text-lg">NoobsterDSA</h1>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Toggle
+              aria-label="Toggle Zen Mode"
+              pressed={zenMode}
+              onPressedChange={onZenModeChange}
+              className={isMobile ? "h-9 w-9 p-0" : "mr-2"}
+              size={isMobile ? "sm" : "default"}
+            >
+              {zenMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Toggle>
+            
+            <Button 
+              onClick={onCreateLog} 
+              size={isMobile ? "sm" : "default"}
+              className="flex items-center gap-1"
+            >
+              <PlusIcon className="h-4 w-4" />
+              {(!isMobile || zenMode) && (
+                <span>{zenMode ? "New Entry" : "New Log"}</span>
+              )}
+            </Button>
+
+            {isMobile && !zenMode && (
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon" className="md:hidden ml-1">
+                    <Menu className="h-[1.2rem] w-[1.2rem]" />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[85vw] sm:w-[300px]">
+                  <SheetHeader className="mb-6">
+                    <SheetTitle className="flex items-center gap-2">
+                      <Logo size={20} />
+                      <span>NoobsterDSA</span>
+                    </SheetTitle>
+                  </SheetHeader>
+                  
+                  <Tabs 
+                    value={activeTab} 
+                    onValueChange={(v) => handleTabChange(v as ActiveTab)}
+                    orientation="vertical"
+                    className="w-full"
+                  >
+                    {renderTabContent("vertical")}
+                  </Tabs>
+                  
+                  <SheetFooter className="mt-8 flex-col items-start">
+                    <Button 
+                      onClick={() => {
+                        onCreateLog();
+                        setIsMenuOpen(false);
+                      }} 
+                      className="w-full flex items-center gap-1 justify-center py-6"
+                    >
+                      <PlusIcon className="h-5 w-5" />
+                      <span className="text-base">New Log</span>
+                    </Button>
+                    <div className="flex items-center justify-between w-full mt-4 border-t pt-4">
+                      <span className="text-base font-medium">Zen Mode</span>
+                      <Toggle
+                        aria-label="Toggle Zen Mode"
+                        pressed={zenMode}
+                        onPressedChange={(enabled) => {
+                          onZenModeChange(enabled);
+                          setIsMenuOpen(false);
+                        }}
+                        size="sm"
+                      >
+                        {zenMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                      </Toggle>
+                    </div>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             )}
           </div>
-          <Switch 
-            checked={isDarkMode} 
-            onCheckedChange={toggleDarkMode} 
-            aria-label="Toggle dark mode"
-          />
         </div>
         
         {!zenMode && (
-          <div className="hidden sm:flex items-center space-x-2 mr-2">
-            <div className="text-sm">Focus</div>
-            <Switch 
-              checked={zenMode} 
-              onCheckedChange={handleZenModeToggle} 
-              aria-label="Toggle zen mode" 
-            />
-          </div>
-        )}
-        
-        {!isApplicationPage && (
-          <Button onClick={onCreateLog}>Add Log</Button>
-        )}
-        
-        {isApplicationPage && (
-          <Button asChild variant="outline">
-            <Link to="/">Back to Dashboard</Link>
-          </Button>
-        )}
-      </div>
-    </>
-  );
-
-  // Mobile menu implementation
-  const MobileMenu = () => (
-    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-      <SheetContent side="left" className="w-[240px]">
-        <SheetHeader>
-          <SheetTitle className="flex items-center">
-            <BookOpen className="h-5 w-5 mr-2 text-primary" />
-            CodeGrowth
-          </SheetTitle>
-        </SheetHeader>
-        
-        <div className="mt-8 space-y-1">
-          {tabsConfig.map((tab) => {
-            const isApp = tab.id === "applications";
-            const isActive = isApp ? isApplicationPage : activeTab === tab.id;
-            
-            return isApp ? (
-              <Button
-                key={tab.id}
-                variant={isActive ? "default" : "ghost"}
-                className="w-full justify-start"
-                asChild
-                onClick={() => setIsMobileMenuOpen(false)}
+          <>
+            {/* Desktop Navigation */}
+            <div className="hidden md:block flex-1 my-2">
+              <Tabs 
+                value={activeTab} 
+                onValueChange={(v) => onTabChange(v as ActiveTab)} 
+                className="w-full flex justify-center"
               >
-                <Link to="/applications">
-                  <tab.icon className="h-4 w-4 mr-2" />
-                  {tab.label}
-                </Link>
-              </Button>
-            ) : (
-              <Button
-                key={tab.id}
-                variant={isActive ? "default" : "ghost"}
-                className="w-full justify-start"
-                onClick={() => {
-                  onTabChange(tab.id as ActiveTab);
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                <tab.icon className="h-4 w-4 mr-2" />
-                {tab.label}
-              </Button>
-            );
-          })}
-        </div>
-        
-        <div className="absolute bottom-6 left-6 right-6">
-          <div className="flex flex-col gap-4 mt-auto">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                {isDarkMode ? (
-                  <Moon className="h-4 w-4 mr-2" />
-                ) : (
-                  <Sun className="h-4 w-4 mr-2" />
-                )}
-                <span className="text-sm">Dark Mode</span>
-              </div>
-              <Switch 
-                checked={isDarkMode} 
-                onCheckedChange={toggleDarkMode} 
-                aria-label="Toggle dark mode"
-              />
+                {renderTabContent()}
+              </Tabs>
             </div>
             
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <PanelRight className="h-4 w-4 mr-2" />
-                <span className="text-sm">Focus Mode</span>
-              </div>
-              <Switch 
-                checked={zenMode} 
-                onCheckedChange={handleZenModeToggle} 
-                aria-label="Toggle zen mode"
-              />
-            </div>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-
-  // Render Drawer for Zen Mode or Mobile
-  if (isDrawerNeeded && isMobile) {
-    return (
-      <>
-        <Drawer.Root>
-          <div className="fixed top-0 left-0 right-0 z-50 transition-all bg-background">
-            <header className={`flex justify-between items-center h-14 px-4 border-b`}>
-              <HeaderContent />
-            </header>
-          </div>
-          <MobileMenu />
-        </Drawer.Root>
-      </>
-    );
-  }
-
-  // Render normal header
-  return (
-    <>
-      <div className="sticky top-0 z-50 transition-all bg-background">
-        <header className={`flex justify-between items-center h-14 px-4 border-b`}>
-          <HeaderContent />
-        </header>
+            {/* Mobile icon-based breadcrumb navigation */}
+            {isMobile && renderBreadcrumbNav()}
+            
+            {/* Mobile drawer-based navigation for full details */}
+            {isMobile && renderMobileNavigation()}
+          </>
+        )}
       </div>
-      <MobileMenu />
-    </>
+    </header>
   );
-};
+}
