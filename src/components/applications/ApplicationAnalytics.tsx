@@ -7,7 +7,7 @@ import { ChartContainer } from '@/components/ui/chart';
 import { Area, AreaChart, PieChart as ReChartsPieChart, Pie, Cell, Legend, Tooltip, Line, LineChart as ReChartsLineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { differenceInDays, isAfter, isBefore, parseISO, subDays } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Briefcase, Calendar, Clock, TrendingUp } from 'lucide-react';
+import { FileHeart, Briefcase, Calendar, Clock, TrendingUp } from 'lucide-react';
 
 interface ApplicationAnalyticsProps {
   applications: ApplicationEntry[];
@@ -179,9 +179,32 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
   
   // Chart configs
   const chartConfig = {
-    applications: { label: "Applications" },
-    responses: { label: "Responses" },
-    offers: { label: "Offers" },
+    applications: { label: "Applications", color: "#3b82f6" },
+    responses: { label: "Responses", color: "#8b5cf6" },
+    offers: { label: "Offers", color: "#10b981" },
+  };
+
+  const statusChartConfig = {
+    to_apply: { label: "To Apply", color: "#94a3b8" },
+    applied: { label: "Applied", color: "#3b82f6" },
+    oa_received: { label: "OA Received", color: "#eab308" },
+    interview_scheduled: { label: "Interview Scheduled", color: "#8b5cf6" },
+    interview_completed: { label: "Interview Completed", color: "#6366f1" },
+    offer_received: { label: "Offer Received", color: "#10b981" },
+    accepted: { label: "Accepted", color: "#22c55e" },
+    rejected: { label: "Rejected", color: "#ef4444" },
+    declined: { label: "Declined", color: "#f97316" }
+  };
+
+  const typeChartConfig = {
+    job: { label: "Jobs", color: "#3b82f6" },
+    internship: { label: "Internships", color: "#8b5cf6" }
+  };
+
+  const priorityChartConfig = {
+    high: { label: "High", color: "#ef4444" },
+    medium: { label: "Medium", color: "#f97316" },
+    low: { label: "Low", color: "#22c55e" }
   };
   
   // No data state
@@ -194,7 +217,7 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
         </CardHeader>
         <CardContent className="pt-6">
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+            <FileHeart className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium">No applications data</h3>
             <p className="text-muted-foreground mt-2">
               Start adding applications to see your analytics
