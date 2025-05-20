@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { LogEntry, WeeklyGoal, TemplateData, ApplicationEntry, DocumentEntry } from "@/types";
 import { Header, ActiveTab } from "@/components/Header";
@@ -7,22 +8,19 @@ import WeeklyGoals from "@/components/WeeklyGoals";
 import TemplateSelector from "@/components/templates/TemplateSelector";
 import Dashboard from "@/components/Dashboard";
 import Analytics from "@/components/Analytics";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { loadFromLocalStorage, saveToLocalStorage, isOfflineSupported } from "@/utils/streakTracking";
 import { useIsMobile, useResponsive } from "@/hooks/use-mobile";
-import ApplicationForm from "@/components/applications/ApplicationForm";
-import ApplicationsList from "@/components/applications/ApplicationsList";
-import ApplicationDetails from "@/components/applications/ApplicationDetails";
-import DocumentsList from "@/components/applications/DocumentsList";
-import DocumentUploader from "@/components/applications/DocumentUploader";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
-import { Plus, Briefcase, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { addDays, isAfter, isBefore } from "date-fns";
 
 const Index = () => {
   // Get responsive state for adaptive layouts
   const { isMobile, isTablet } = useResponsive();
+  const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     // Try to restore last active tab from localStorage
@@ -43,12 +41,9 @@ const Index = () => {
     return loadFromLocalStorage("codeTemplates", []);
   });
 
+  // Load applications for notifications only
   const [applications, setApplications] = useState<ApplicationEntry[]>(() => {
     return loadFromLocalStorage("applications", []);
-  });
-
-  const [documents, setDocuments] = useState<DocumentEntry[]>(() => {
-    return loadFromLocalStorage("documents", []);
   });
 
   const [isNewLogOpen, setIsNewLogOpen] = useState(false);
@@ -57,12 +52,6 @@ const Index = () => {
     // Load zen mode preference from localStorage
     return localStorage.getItem("zenMode") === "true";
   });
-
-  // Application tracker state
-  const [isApplicationFormOpen, setIsApplicationFormOpen] = useState(false);
-  const [selectedApplication, setSelectedApplication] = useState<ApplicationEntry | null>(null);
-  const [viewingApplication, setViewingApplication] = useState<ApplicationEntry | null>(null);
-  const [applicationsTab, setApplicationsTab] = useState<"applications" | "documents">("applications");
   
   const { toast } = useToast();
 
@@ -82,6 +71,11 @@ const Index = () => {
     }
   }, []);
 
+  // Check for deadline notifications on load
+  useEffect(() => {
+    checkDeadlineNotifications();
+  }, [applications]);
+
   // Save data to localStorage whenever it changes
   useEffect(() => {
     saveToLocalStorage("codeLogs", logs);
@@ -99,14 +93,41 @@ const Index = () => {
     saveToLocalStorage("applications", applications);
   }, [applications]);
 
-  useEffect(() => {
-    saveToLocalStorage("documents", documents);
-  }, [documents]);
-
   // Save zen mode preference to localStorage
   useEffect(() => {
     localStorage.setItem("zenMode", String(zenMode));
   }, [zenMode]);
+
+  // Check for deadline notifications
+  const checkDeadlineNotifications = () => {
+    const now = new Date();
+    const upcomingDeadlines = applications.filter(app => 
+      app.deadline && 
+      isAfter(new Date(app.deadline), now) && 
+      isBefore(new Date(app.deadline), addDays(now, 3)) &&
+      !['rejected', 'declined', 'accepted'].includes(app.status)
+    );
+    
+    if (upcomingDeadlines.length > 0) {
+      // Only show notification if we haven't shown it in the last 24 hours
+      const lastNotification = localStorage.getItem('lastDeadlineNotification');
+      const showNotification = !lastNotification || 
+        isAfter(now, addDays(new Date(lastNotification), 1));
+      
+      if (showNotification) {
+        sonnerToast("Upcoming application deadlines", {
+          description: `You have ${upcomingDeadlines.length} application${upcomingDeadlines.length === 1 ? '' : 's'} due in the next 3 days.`,
+          duration: 5000,
+          action: {
+            label: "View",
+            onClick: () => navigate("/applications")
+          }
+        });
+        
+        localStorage.setItem('lastDeadlineNotification', now.toISOString());
+      }
+    }
+  };
 
   // Handle creating a new log
   const handleCreateLog = () => {
@@ -205,90 +226,6 @@ const Index = () => {
     });
   };
 
-  // Application tracker handlers
-  const handleOpenApplicationForm = (application?: ApplicationEntry) => {
-    if (application) {
-      setSelectedApplication(application);
-    } else {
-      setSelectedApplication(null);
-    }
-    setIsApplicationFormOpen(true);
-  };
-
-  const handleSaveApplication = (application: ApplicationEntry) => {
-    if (selectedApplication?.id) {
-      // Edit existing application
-      setApplications(applications.map(app => 
-        app.id === application.id ? application : app
-      ));
-      toast({
-        title: "Application Updated",
-        description: `Your application for ${application.role} at ${application.companyName} has been updated.`,
-      });
-    } else {
-      // Add new application
-      const newApplication = {
-        ...application,
-        id: uuidv4(),
-      };
-      setApplications([...applications, newApplication]);
-      toast({
-        title: "Application Added",
-        description: `Your application for ${application.role} at ${application.companyName} has been added.`,
-      });
-    }
-    setIsApplicationFormOpen(false);
-  };
-
-  const handleDeleteApplication = (id: string) => {
-    setApplications(applications.filter(app => app.id !== id));
-    toast({
-      title: "Application Deleted",
-      description: "Your application has been deleted.",
-      variant: "destructive",
-    });
-  };
-
-  const handleUploadDocument = (document: DocumentEntry) => {
-    setDocuments([...documents, document]);
-    toast({
-      title: "Document Uploaded",
-      description: `Your document "${document.name}" has been uploaded.`,
-    });
-  };
-
-  const handleDeleteDocument = (id: string) => {
-    // Check if document is used in any application
-    const isUsed = applications.some(app => app.documents?.includes(id));
-    
-    if (isUsed) {
-      sonnerToast("Document in use", {
-        description: "This document is attached to one or more applications. Document references will be removed from those applications.",
-        duration: 5000,
-      });
-      
-      // Remove document reference from all applications
-      const updatedApplications = applications.map(app => {
-        if (app.documents?.includes(id)) {
-          return {
-            ...app,
-            documents: app.documents.filter(docId => docId !== id)
-          };
-        }
-        return app;
-      });
-      
-      setApplications(updatedApplications);
-    }
-    
-    setDocuments(documents.filter(doc => doc.id !== id));
-    toast({
-      title: "Document Deleted",
-      description: "Your document has been deleted.",
-      variant: "destructive",
-    });
-  };
-
   const handleZenModeChange = (enabled: boolean) => {
     setZenMode(enabled);
     if (enabled) {
@@ -314,6 +251,11 @@ const Index = () => {
       });
     }
     setActiveTab(tab);
+  };
+
+  // Application tracker navigation
+  const handleNavigateToApplications = () => {
+    navigate("/applications");
   };
 
   // Calculate appropriate container class based on screen size and zen mode
@@ -382,57 +324,25 @@ const Index = () => {
         {activeTab === "applications" && !zenMode && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Application Tracker</h1>
-              <div className="flex gap-2">
-                {applicationsTab === "applications" ? (
-                  <Button onClick={() => handleOpenApplicationForm()}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Application
-                  </Button>
-                ) : (
-                  <Button onClick={() => setApplicationsTab("applications")}>
-                    <Briefcase className="mr-2 h-4 w-4" />
-                    Applications
-                  </Button>
-                )}
-                
-                {applicationsTab === "documents" ? (
-                  <Button onClick={() => setApplicationsTab("applications")}>
-                    <Briefcase className="mr-2 h-4 w-4" />
-                    Applications
-                  </Button>
-                ) : (
-                  <Button onClick={() => setApplicationsTab("documents")}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Documents
-                  </Button>
-                )}
+              <div>
+                <h1 className="text-2xl font-bold">Application Tracker</h1>
+                <p className="text-muted-foreground">
+                  Track and manage your job and internship applications
+                </p>
               </div>
+              <Button onClick={handleNavigateToApplications}>
+                Open Application Tracker
+              </Button>
             </div>
-
-            {applicationsTab === "applications" && (
-              <ApplicationsList
-                applications={applications}
-                documents={documents}
-                onEdit={handleOpenApplicationForm}
-                onDelete={handleDeleteApplication}
-                onView={(app) => setViewingApplication(app)}
-              />
-            )}
             
-            {applicationsTab === "documents" && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-lg font-semibold mb-4">Upload New Document</h2>
-                  <DocumentUploader onUpload={handleUploadDocument} />
-                </div>
-                
-                <DocumentsList 
-                  documents={documents} 
-                  onDelete={handleDeleteDocument} 
-                />
-              </div>
-            )}
+            <div className="text-center py-10 bg-muted/30 rounded-md">
+              <p className="text-muted-foreground mb-4">
+                The Application Tracker has been moved to a dedicated page for better organization.
+              </p>
+              <Button onClick={handleNavigateToApplications}>
+                Open Application Tracker
+              </Button>
+            </div>
           </div>
         )}
       </main>
@@ -444,21 +354,6 @@ const Index = () => {
         templates={templates}
         initialData={editingLog || {}}
         zenMode={zenMode}
-      />
-
-      <ApplicationForm 
-        open={isApplicationFormOpen}
-        onOpenChange={setIsApplicationFormOpen}
-        onSave={handleSaveApplication}
-        initialData={selectedApplication || {}}
-        documents={documents}
-      />
-      
-      <ApplicationDetails 
-        application={viewingApplication} 
-        open={!!viewingApplication}
-        onOpenChange={(open) => !open && setViewingApplication(null)}
-        documents={documents}
       />
     </div>
   );
