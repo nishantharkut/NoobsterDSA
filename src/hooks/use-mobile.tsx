@@ -99,7 +99,7 @@ export function useResponsive() {
     isMobile,
     isTablet,
     isDesktop,
-    // Correcting the logic for these derived values
+    // Corrected logic for these derived values
     isTabletOnly: !isMobile && isTablet,
     isDesktopAndAbove: !isDesktop
   };
