@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { LogEntry, WeeklyGoal, TemplateData, ApplicationEntry, DocumentEntry } from "@/types";
 import { Header, ActiveTab } from "@/components/Header";
@@ -18,6 +17,8 @@ import ApplicationDetails from "@/components/applications/ApplicationDetails";
 import DocumentsList from "@/components/applications/DocumentsList";
 import DocumentUploader from "@/components/applications/DocumentUploader";
 import { v4 as uuidv4 } from "uuid";
+import { Button } from "@/components/ui/button";
+import { Plus, Briefcase, FileText } from "lucide-react";
 
 const Index = () => {
   // Get responsive state for adaptive layouts
