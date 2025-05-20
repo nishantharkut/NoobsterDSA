@@ -1,3 +1,4 @@
+
 export type Topic = 
   | "arrays" 
   | "strings" 
@@ -102,16 +103,71 @@ export interface Analytics {
   lastActive: string; // Date of last activity
 }
 
-// New interface for platform patterns to auto-detect platform and difficulty
 export interface PlatformPattern {
   platform: Platform;
   urlPattern: RegExp;
   difficultyExtractor?: (url: string) => DifficultyLevel | null;
 }
 
-// New interface for streak tracking
 export interface StreakData {
   currentStreak: number;
   longestStreak: number;
   lastActiveDate: string; // Format: "YYYY-MM-DD"
+}
+
+// Application Tracker Types
+export type ApplicationStatus = 
+  | "to_apply" 
+  | "applied" 
+  | "oa_received" 
+  | "interview_scheduled" 
+  | "interview_completed" 
+  | "offer_received" 
+  | "accepted" 
+  | "rejected" 
+  | "declined";
+
+export type ApplicationType = 
+  | "internship" 
+  | "job";
+
+export interface ApplicationEntry {
+  id: string;
+  type: ApplicationType;
+  companyName: string;
+  role: string;
+  location: string;
+  status: ApplicationStatus;
+  link: string;
+  deadline?: Date;
+  appliedDate?: Date;
+  notes?: string;
+  salary?: string;
+  priority: "low" | "medium" | "high";
+  documents?: string[]; // Array of document IDs
+  interviews?: InterviewEntry[];
+}
+
+export interface InterviewEntry {
+  id: string;
+  date: Date;
+  type: string; // "phone", "technical", "onsite", "behavioral", etc.
+  interviewer?: string;
+  notes?: string;
+  completed: boolean;
+  feedback?: string;
+}
+
+export interface DocumentEntry {
+  id: string;
+  name: string;
+  type: "resume" | "cover_letter" | "portfolio" | "recommendation" | "transcript" | "other";
+  version: string;
+  description?: string;
+  dateCreated: Date;
+  dateUpdated: Date;
+  tags: string[];
+  content: string; // Base64 encoded file content
+  mimeType: string;
+  isDefault?: boolean;
 }
