@@ -3,10 +3,11 @@ import React, { useMemo } from 'react';
 import { ApplicationEntry, ApplicationStatus, ApplicationType } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChartContainer, LineChart, PieChart } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
+import { Area, AreaChart, PieChart as ReChartsPieChart, Pie, Cell, Legend, Tooltip, Line, LineChart as ReChartsLineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { differenceInDays, isAfter, isBefore, parseISO, subDays } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { FileChart, Briefcase, Calendar, Clock, TrendingUp } from 'lucide-react';
+import { FileText, Briefcase, Calendar, Clock, TrendingUp } from 'lucide-react';
 
 interface ApplicationAnalyticsProps {
   applications: ApplicationEntry[];
@@ -176,6 +177,13 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
     return monthlyData;
   }, [applications]);
   
+  // Chart configs
+  const chartConfig = {
+    applications: { label: "Applications" },
+    responses: { label: "Responses" },
+    offers: { label: "Offers" },
+  };
+  
   // No data state
   if (applications.length === 0) {
     return (
@@ -186,7 +194,7 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
         </CardHeader>
         <CardContent className="pt-6">
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <FileChart className="h-12 w-12 text-muted-foreground mb-4" />
+            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium">No applications data</h3>
             <p className="text-muted-foreground mt-2">
               Start adding applications to see your analytics
@@ -266,9 +274,26 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
                 <CardTitle>Application Status</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChartContainer className="h-80">
-                  <PieChart data={statusPieData} />
-                </ChartContainer>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ReChartsPieChart>
+                      <Pie
+                        data={statusPieData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {statusPieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </ReChartsPieChart>
+                  </ResponsiveContainer>
+                </div>
                 <div className="mt-4 space-y-2">
                   {statusPieData.map((item) => (
                     <div key={item.name} className="flex items-center">
@@ -288,9 +313,26 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
                 <CardTitle>Application Type</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChartContainer className="h-80">
-                  <PieChart data={typePieData} />
-                </ChartContainer>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ReChartsPieChart>
+                      <Pie
+                        data={typePieData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {typePieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </ReChartsPieChart>
+                  </ResponsiveContainer>
+                </div>
                 <div className="mt-4 space-y-2">
                   {typePieData.map((item) => (
                     <div key={item.name} className="flex items-center">
@@ -310,9 +352,26 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
                 <CardTitle>Application Priority</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChartContainer className="h-80">
-                  <PieChart data={priorityPieData} />
-                </ChartContainer>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ReChartsPieChart>
+                      <Pie
+                        data={priorityPieData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {priorityPieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </ReChartsPieChart>
+                  </ResponsiveContainer>
+                </div>
                 <div className="mt-4 space-y-2">
                   {priorityPieData.map((item) => (
                     <div key={item.name} className="flex items-center">
@@ -336,14 +395,20 @@ const ApplicationAnalytics: React.FC<ApplicationAnalyticsProps> = ({ application
               <CardDescription>Applications, responses, and offers over time</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer className="h-96">
-                <LineChart 
-                  data={monthlyTrendData}
-                  categories={['applications', 'responses', 'offers']}
-                  colors={['#3b82f6', '#8b5cf6', '#10b981']}
-                  valueFormatter={(value) => `${value} apps`}
-                />
-              </ChartContainer>
+              <div className="h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ReChartsLineChart data={monthlyTrendData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="applications" stroke="#3b82f6" strokeWidth={2} />
+                    <Line type="monotone" dataKey="responses" stroke="#8b5cf6" strokeWidth={2} />
+                    <Line type="monotone" dataKey="offers" stroke="#10b981" strokeWidth={2} />
+                  </ReChartsLineChart>
+                </ResponsiveContainer>
+              </div>
               <div className="mt-4 flex justify-center gap-4">
                 <div className="flex items-center">
                   <div className="mr-2 h-3 w-3 rounded-full bg-blue-500" />
