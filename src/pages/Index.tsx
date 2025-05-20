@@ -341,7 +341,7 @@ const Index = () => {
                     key={app.id} 
                     className="bg-muted/50 p-2 rounded-md text-sm flex justify-between"
                   >
-                    <span className="truncate">{app.company}</span>
+                    <span className="truncate">{app.companyName}</span>
                     <span className="font-medium">
                       {new Date(app.deadline!).toLocaleDateString()}
                     </span>
