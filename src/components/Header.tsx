@@ -6,6 +6,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Switch } from "@/components/ui/switch";
 import { Drawer } from "vaul";
 import { useResponsive } from "@/hooks/use-mobile";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export type ActiveTab = "dashboard" | "logs" | "goals" | "templates" | "analytics" | "applications";
 
@@ -36,6 +38,7 @@ export const Header = ({
   const { isMobile, isTablet } = useResponsive();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
   
   // Initialize dark mode from localStorage or zen mode setting
   useEffect(() => {
@@ -82,6 +85,10 @@ export const Header = ({
   };
 
   const isDrawerNeeded = zenMode || activeTab === "logs";
+  
+  // Is the current location the application tracker page?
+  const isApplicationPage = location.pathname === "/applications";
+
   const HeaderContent = () => (
     <>
       <div className="flex items-center">
@@ -95,24 +102,42 @@ export const Header = ({
           </Button>
         </div>
         
-        <div className="hidden lg:flex items-center space-x-1">
+        <div className="flex items-center space-x-1">
           <BookOpen className="h-5 w-5 mr-1 text-primary" />
           <h1 className="text-lg font-bold">CodeGrowth</h1>
         </div>
         
         <div className="hidden lg:flex ml-6 space-x-1 transition-all">
-          {tabsConfig.map(tab => (
-            <Button
-              key={tab.id}
-              variant={activeTab === tab.id ? "default" : "ghost"}
-              size="sm"
-              onClick={() => onTabChange(tab.id as ActiveTab)}
-              className="transition-colors"
-            >
-              <tab.icon className="h-4 w-4 mr-2" />
-              {tab.label}
-            </Button>
-          ))}
+          {tabsConfig.map(tab => {
+            const isApp = tab.id === "applications";
+            const isActive = isApp ? isApplicationPage : activeTab === tab.id;
+            
+            return isApp ? (
+              <Button
+                key={tab.id}
+                variant={isActive ? "default" : "ghost"}
+                size="sm"
+                asChild
+                className="transition-colors"
+              >
+                <Link to="/applications">
+                  <tab.icon className="h-4 w-4 mr-2" />
+                  {tab.label}
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                key={tab.id}
+                variant={isActive ? "default" : "ghost"}
+                size="sm"
+                onClick={() => onTabChange(tab.id as ActiveTab)}
+                className="transition-colors"
+              >
+                <tab.icon className="h-4 w-4 mr-2" />
+                {tab.label}
+              </Button>
+            );
+          })}
         </div>
       </div>
 
@@ -143,7 +168,15 @@ export const Header = ({
           </div>
         )}
         
-        <Button onClick={onCreateLog}>Add Log</Button>
+        {!isApplicationPage && (
+          <Button onClick={onCreateLog}>Add Log</Button>
+        )}
+        
+        {isApplicationPage && (
+          <Button asChild variant="outline">
+            <Link to="/">Back to Dashboard</Link>
+          </Button>
+        )}
       </div>
     </>
   );
@@ -160,20 +193,38 @@ export const Header = ({
         </SheetHeader>
         
         <div className="mt-8 space-y-1">
-          {tabsConfig.map((tab) => (
-            <Button
-              key={tab.id}
-              variant={activeTab === tab.id ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => {
-                onTabChange(tab.id as ActiveTab);
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              <tab.icon className="h-4 w-4 mr-2" />
-              {tab.label}
-            </Button>
-          ))}
+          {tabsConfig.map((tab) => {
+            const isApp = tab.id === "applications";
+            const isActive = isApp ? isApplicationPage : activeTab === tab.id;
+            
+            return isApp ? (
+              <Button
+                key={tab.id}
+                variant={isActive ? "default" : "ghost"}
+                className="w-full justify-start"
+                asChild
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Link to="/applications">
+                  <tab.icon className="h-4 w-4 mr-2" />
+                  {tab.label}
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                key={tab.id}
+                variant={isActive ? "default" : "ghost"}
+                className="w-full justify-start"
+                onClick={() => {
+                  onTabChange(tab.id as ActiveTab);
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                <tab.icon className="h-4 w-4 mr-2" />
+                {tab.label}
+              </Button>
+            );
+          })}
         </div>
         
         <div className="absolute bottom-6 left-6 right-6">

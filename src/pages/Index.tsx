@@ -14,13 +14,23 @@ import { loadFromLocalStorage, saveToLocalStorage, isOfflineSupported } from "@/
 import { useIsMobile, useResponsive } from "@/hooks/use-mobile";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { addDays, isAfter, isBefore } from "date-fns";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Briefcase, ArrowRight, Calendar, Bell } from "lucide-react";
 
 const Index = () => {
   // Get responsive state for adaptive layouts
   const { isMobile, isTablet } = useResponsive();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     // Try to restore last active tab from localStorage
@@ -273,6 +283,93 @@ const Index = () => {
     return className;
   };
 
+  // Get pending applications count
+  const pendingApplicationsCount = applications.filter(
+    app => !['rejected', 'declined', 'accepted'].includes(app.status)
+  ).length;
+
+  // Get upcoming deadlines
+  const now = new Date();
+  const upcomingDeadlines = applications.filter(app => 
+    app.deadline && 
+    isAfter(new Date(app.deadline), now) && 
+    isBefore(new Date(app.deadline), addDays(now, 7)) &&
+    !['rejected', 'declined', 'accepted'].includes(app.status)
+  );
+
+  // Application summary component for dashboard
+  const ApplicationSummary = () => (
+    <Card className="shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-xl flex items-center">
+              <Briefcase className="mr-2 h-5 w-5 text-primary" />
+              Application Tracker
+            </CardTitle>
+            <CardDescription>Track your job applications</CardDescription>
+          </div>
+          {upcomingDeadlines.length > 0 && (
+            <div className="bg-orange-100 dark:bg-orange-900 p-1 px-2 rounded-full flex items-center">
+              <Bell className="h-3 w-3 mr-1 text-orange-500 dark:text-orange-300" />
+              <span className="text-xs font-medium text-orange-600 dark:text-orange-300">
+                {upcomingDeadlines.length} upcoming
+              </span>
+            </div>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span>Total Applications</span>
+            <span className="font-semibold">{applications.length}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span>Pending Applications</span>
+            <span className="font-semibold">{pendingApplicationsCount}</span>
+          </div>
+          {upcomingDeadlines.length > 0 && (
+            <div className="mt-4">
+              <div className="font-semibold mb-2 flex items-center">
+                <Calendar className="h-4 w-4 mr-1 text-primary" />
+                Upcoming Deadlines
+              </div>
+              <div className="space-y-1 max-h-28 overflow-y-auto pr-1">
+                {upcomingDeadlines.slice(0, 3).map(app => (
+                  <div 
+                    key={app.id} 
+                    className="bg-muted/50 p-2 rounded-md text-sm flex justify-between"
+                  >
+                    <span className="truncate">{app.company}</span>
+                    <span className="font-medium">
+                      {new Date(app.deadline!).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+                {upcomingDeadlines.length > 3 && (
+                  <div className="text-xs text-center text-muted-foreground">
+                    +{upcomingDeadlines.length - 3} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          onClick={handleNavigateToApplications} 
+          className="w-full" 
+          variant="outline"
+        >
+          View Application Tracker
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header 
@@ -285,10 +382,21 @@ const Index = () => {
       
       <main className={getContainerClass()}>
         {activeTab === "dashboard" && !zenMode && (
-          <Dashboard 
-            logs={logs} 
-            goals={weeklyGoals}
-          />
+          <div className="space-y-8">
+            <Dashboard 
+              logs={logs} 
+              goals={weeklyGoals}
+            />
+            
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4">Application Tracker</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-1">
+                  <ApplicationSummary />
+                </div>
+              </div>
+            </div>
+          </div>
         )}
         
         {activeTab === "logs" && (
@@ -335,13 +443,21 @@ const Index = () => {
               </Button>
             </div>
             
-            <div className="text-center py-10 bg-muted/30 rounded-md">
-              <p className="text-muted-foreground mb-4">
-                The Application Tracker has been moved to a dedicated page for better organization.
-              </p>
-              <Button onClick={handleNavigateToApplications}>
-                Open Application Tracker
-              </Button>
+            <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg p-6 shadow-sm">
+              <div className="text-center space-y-4">
+                <Briefcase className="h-12 w-12 mx-auto text-primary opacity-80" />
+                <h2 className="text-xl font-semibold">Manage Your Job Applications</h2>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  Keep track of your applications, deadlines, and interview progress in one place.
+                </p>
+                <Button 
+                  size="lg" 
+                  onClick={handleNavigateToApplications}
+                  className="mt-2"
+                >
+                  Go to Application Tracker
+                </Button>
+              </div>
             </div>
           </div>
         )}
