@@ -6,6 +6,7 @@ import LearningDashboard from "@/components/learning/LearningDashboard";
 import CodeEditor from "@/components/coding/CodeEditor";
 import { useToast } from "@/components/ui/use-toast";
 import { loadFromLocalStorage, saveToLocalStorage } from "@/utils/streakTracking";
+import { sampleProblems } from "@/data/sampleProblems";
 
 const Index = () => {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(() => {
@@ -18,18 +19,18 @@ const Index = () => {
   
   const { toast } = useToast();
 
-  // Sample data - in a real app this would come from an API
+  // Sample data - enhanced with more realistic content
   const [modules] = useState<LearningModule[]>([
     {
       id: "arrays-strings-module",
       track: "arrays-strings",
       title: "Arrays & Strings",
       subtitle: "Master the building blocks of programming",
-      description: "Learn fundamental data structures and string manipulation techniques",
-      estimatedTime: 8,
+      description: "Learn fundamental data structures including arrays, strings, and basic manipulation techniques. Perfect for beginners starting their DSA journey.",
+      estimatedTime: 12,
       prerequisiteModules: [],
-      problems: ["two-sum", "valid-palindrome", "best-time-stock"],
-      theoryContent: "Arrays and strings theory content...",
+      problems: ["two-sum", "valid-palindrome", "best-time-stock", "contains-duplicate"],
+      theoryContent: "Arrays and strings are the foundation of data structures...",
       isLocked: false,
       completionPercentage: userProgress?.currentTrack === "arrays-strings" ? 65 : 0
     },
@@ -38,101 +39,67 @@ const Index = () => {
       track: "linked-lists",
       title: "Linked Lists",
       subtitle: "Connect the dots with dynamic data",
-      description: "Understanding pointers and dynamic data structures",
-      estimatedTime: 6,
+      description: "Understanding pointers and dynamic data structures. Learn to manipulate linked lists and solve classic problems.",
+      estimatedTime: 8,
       prerequisiteModules: ["arrays-strings-module"],
-      problems: ["reverse-linked-list", "merge-two-lists"],
-      theoryContent: "Linked lists theory content...",
-      isLocked: userProgress?.currentTrack !== "linked-lists",
+      problems: ["reverse-linked-list", "merge-two-lists", "cycle-detection"],
+      theoryContent: "Linked lists are dynamic data structures...",
+      isLocked: userProgress?.currentTrack === "arrays-strings" && userProgress?.totalProblemsSolved < 3,
+      completionPercentage: 0
+    },
+    {
+      id: "stacks-queues-module",
+      track: "stacks-queues",
+      title: "Stacks & Queues",
+      subtitle: "LIFO and FIFO data structures",
+      description: "Master stack and queue operations, and learn when to use each data structure effectively.",
+      estimatedTime: 6,
+      prerequisiteModules: ["linked-lists-module"],
+      problems: ["valid-parentheses", "implement-queue", "min-stack"],
+      theoryContent: "Stacks and queues are essential data structures...",
+      isLocked: true,
+      completionPercentage: 0
+    },
+    {
+      id: "hash-tables-module",
+      track: "hash-tables",
+      title: "Hash Tables",
+      subtitle: "Fast lookups and data organization",
+      description: "Learn about hash functions, collision resolution, and efficient data storage and retrieval.",
+      estimatedTime: 10,
+      prerequisiteModules: ["arrays-strings-module"],
+      problems: ["group-anagrams", "top-k-frequent", "word-pattern"],
+      theoryContent: "Hash tables provide O(1) average lookup time...",
+      isLocked: true,
+      completionPercentage: 0
+    },
+    {
+      id: "binary-trees-module",
+      track: "binary-trees",
+      title: "Binary Trees",
+      subtitle: "Hierarchical data structures",
+      description: "Explore tree traversals, binary tree properties, and fundamental tree algorithms.",
+      estimatedTime: 14,
+      prerequisiteModules: ["linked-lists-module"],
+      problems: ["tree-traversal", "max-depth", "symmetric-tree"],
+      theoryContent: "Binary trees are hierarchical data structures...",
+      isLocked: true,
+      completionPercentage: 0
+    },
+    {
+      id: "dynamic-programming-module",
+      track: "dynamic-programming",
+      title: "Dynamic Programming",
+      subtitle: "Optimize with memoization",
+      description: "Master the art of breaking down complex problems and avoiding redundant calculations.",
+      estimatedTime: 16,
+      prerequisiteModules: ["binary-trees-module"],
+      problems: ["fibonacci", "climbing-stairs", "coin-change"],
+      theoryContent: "Dynamic programming optimizes recursive solutions...",
+      isLocked: true,
       completionPercentage: 0
     }
   ]);
-
-  const [sampleProblem] = useState<Problem>({
-    id: "two-sum",
-    title: "Two Sum",
-    description: `
-      <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to target.</p>
-      <p>You may assume that each input would have exactly one solution, and you may not use the same element twice.</p>
-      <h4>Example:</h4>
-      <pre>Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: nums[0] + nums[1] = 2 + 7 = 9</pre>
-    `,
-    difficulty: "easy",
-    track: "arrays-strings",
-    hints: [
-      "Think about what information you need to store as you iterate through the array",
-      "A hash map can help you find complements efficiently",
-      "For each number, check if its complement (target - current number) exists in your hash map"
-    ],
-    starterCode: {
-      python: `def two_sum(nums, target):
-    # Your code here
-    pass`,
-      javascript: `function twoSum(nums, target) {
-    // Your code here
-}`,
-      java: `public int[] twoSum(int[] nums, int target) {
-    // Your code here
-    return new int[]{};
-}`,
-      cpp: `vector<int> twoSum(vector<int>& nums, int target) {
-    // Your code here
-    return {};
-}`
-    },
-    solution: {
-      python: `def two_sum(nums, target):
-    num_map = {}
-    for i, num in enumerate(nums):
-        complement = target - num
-        if complement in num_map:
-            return [num_map[complement], i]
-        num_map[num] = i
-    return []`,
-      javascript: `function twoSum(nums, target) {
-    const numMap = new Map();
-    for (let i = 0; i < nums.length; i++) {
-        const complement = target - nums[i];
-        if (numMap.has(complement)) {
-            return [numMap.get(complement), i];
-        }
-        numMap.set(nums[i], i);
-    }
-    return [];
-}`,
-      java: `public int[] twoSum(int[] nums, int target) {
-    Map<Integer, Integer> numMap = new HashMap<>();
-    for (int i = 0; i < nums.length; i++) {
-        int complement = target - nums[i];
-        if (numMap.containsKey(complement)) {
-            return new int[]{numMap.get(complement), i};
-        }
-        numMap.put(nums[i], i);
-    }
-    return new int[]{};
-}`,
-      cpp: `vector<int> twoSum(vector<int>& nums, int target) {
-    unordered_map<int, int> numMap;
-    for (int i = 0; i < nums.size(); i++) {
-        int complement = target - nums[i];
-        if (numMap.find(complement) != numMap.end()) {
-            return {numMap[complement], i};
-        }
-        numMap[nums[i]] = i;
-    }
-    return {};
-}`
-    },
-    testCases: [
-      { id: "1", input: "[2,7,11,15], 9", expectedOutput: "[0,1]", isHidden: false },
-      { id: "2", input: "[3,2,4], 6", expectedOutput: "[1,2]", isHidden: false },
-      { id: "3", input: "[3,3], 6", expectedOutput: "[0,1]", isHidden: false }
-    ],
-    timeEstimate: 15,
-    conceptsUsed: ["Hash Map", "Array Traversal", "Two Pointers"]
-  });
 
   useEffect(() => {
     if (userProgress) {
@@ -142,7 +109,7 @@ Explanation: nums[0] + nums[1] = 2 + 7 = 9</pre>
 
   const handleOnboardingComplete = (userData: Partial<UserProgress>) => {
     const newUserProgress: UserProgress = {
-      userId: "user-1",
+      userId: `user-${Date.now()}`,
       solvedProblems: [],
       currentTrack: "arrays-strings",
       preferredLanguage: userData.preferredLanguage || "python",
@@ -159,8 +126,8 @@ Explanation: nums[0] + nums[1] = 2 + 7 = 9</pre>
     
     setUserProgress(newUserProgress);
     toast({
-      title: "Welcome to your DSA journey!",
-      description: "Let's start with your first learning track.",
+      title: "🎉 Welcome to your DSA journey!",
+      description: "Let's start with Arrays & Strings - the foundation of all programming!",
     });
   };
 
@@ -169,41 +136,83 @@ Explanation: nums[0] + nums[1] = 2 + 7 = 9</pre>
     if (module && !module.isLocked) {
       setSelectedModule(module);
       setCurrentView("module");
+    } else if (module?.isLocked) {
+      toast({
+        title: "Module Locked",
+        description: "Complete the prerequisite modules to unlock this content.",
+        variant: "destructive"
+      });
     }
   };
 
   const handleProblemClick = (problemId: string) => {
-    setSelectedProblem(sampleProblem); // In real app, fetch by problemId
-    setCurrentView("problem");
+    const problem = sampleProblems.find(p => p.id === problemId);
+    if (problem) {
+      setSelectedProblem(problem);
+      setCurrentView("problem");
+    } else {
+      // Fallback to first problem if specific one not found
+      setSelectedProblem(sampleProblems[0]);
+      setCurrentView("problem");
+    }
   };
 
   const handleCodeSubmit = (code: string, isCorrect: boolean, attempts: number, hintsUsed: number) => {
-    if (isCorrect && userProgress) {
+    if (isCorrect && userProgress && selectedProblem) {
+      const newStreakDays = userProgress.streakDays + (userProgress.solvedProblems.length === 0 ? 1 : 0);
       const updatedProgress = {
         ...userProgress,
         totalProblemsSolved: userProgress.totalProblemsSolved + 1,
         totalProblemsAttempted: userProgress.totalProblemsAttempted + 1,
-        solvedProblems: [...userProgress.solvedProblems, selectedProblem!.id]
+        solvedProblems: [...userProgress.solvedProblems, selectedProblem.id],
+        streakDays: newStreakDays
       };
       
       setUserProgress(updatedProgress);
       
+      // Check for new badges
+      const badges = [];
+      if (updatedProgress.totalProblemsSolved === 1) {
+        badges.push({ id: "first-solve", name: "First Steps", description: "Solved first problem", icon: "⭐", unlockedAt: new Date() });
+      }
+      if (updatedProgress.streakDays === 3) {
+        badges.push({ id: "streak-3", name: "Streak Starter", description: "3-day streak", icon: "🔥", unlockedAt: new Date() });
+      }
+      if (updatedProgress.totalProblemsSolved === 10) {
+        badges.push({ id: "problem-solver", name: "Problem Solver", description: "10 problems solved", icon: "🎯", unlockedAt: new Date() });
+      }
+      
+      if (badges.length > 0) {
+        setUserProgress(prev => prev ? { ...prev, badges: [...prev.badges, ...badges] } : prev);
+        toast({
+          title: `🏆 New Badge${badges.length > 1 ? 's' : ''} Unlocked!`,
+          description: badges.map(b => b.name).join(', '),
+        });
+      }
+      
       toast({
         title: "🎉 Problem Solved!",
-        description: `Great job! You solved "${selectedProblem!.title}" in ${attempts} attempts.`,
+        description: `Excellent work! You solved "${selectedProblem.title}" in ${attempts} attempts using ${hintsUsed} hints.`,
       });
       
-      // Return to dashboard after solving
+      // Return to dashboard after a short delay
       setTimeout(() => {
         setCurrentView("dashboard");
         setSelectedProblem(null);
-      }, 2000);
+      }, 3000);
     } else if (userProgress) {
       const updatedProgress = {
         ...userProgress,
         totalProblemsAttempted: userProgress.totalProblemsAttempted + 1
       };
       setUserProgress(updatedProgress);
+      
+      if (attempts > 3) {
+        toast({
+          title: "Keep trying!",
+          description: "Don't give up! Use the hints if you're stuck. Every attempt makes you stronger! 💪",
+        });
+      }
     }
   };
 
@@ -226,13 +235,18 @@ Explanation: nums[0] + nums[1] = 2 + 7 = 9</pre>
     case "problem":
       return selectedProblem ? (
         <div className="min-h-screen bg-background">
-          <div className="border-b p-4">
-            <button 
-              onClick={() => setCurrentView("dashboard")}
-              className="text-blue-600 hover:text-blue-800"
-            >
-              ← Back to Dashboard
-            </button>
+          <div className="border-b p-4 bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <button 
+                onClick={() => setCurrentView("dashboard")}
+                className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2 transition-colors"
+              >
+                ← Back to Dashboard
+              </button>
+              <div className="text-sm text-muted-foreground">
+                Problem {sampleProblems.findIndex(p => p.id === selectedProblem.id) + 1} of {sampleProblems.length}
+              </div>
+            </div>
           </div>
           <CodeEditor
             problem={selectedProblem}
@@ -245,44 +259,80 @@ Explanation: nums[0] + nums[1] = 2 + 7 = 9</pre>
 
     case "module":
       return selectedModule ? (
-        <div className="min-h-screen bg-background p-6">
-          <button 
-            onClick={() => setCurrentView("dashboard")}
-            className="text-blue-600 hover:text-blue-800 mb-4"
-          >
-            ← Back to Dashboard
-          </button>
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2">{selectedModule.title}</h1>
-            <p className="text-lg text-muted-foreground mb-6">{selectedModule.subtitle}</p>
-            {/* Module content would go here */}
+        <div className="min-h-screen bg-background">
+          <div className="border-b p-4 bg-white shadow-sm">
             <button 
-              onClick={() => handleProblemClick("two-sum")}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              onClick={() => setCurrentView("dashboard")}
+              className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2 transition-colors"
             >
-              Start First Problem
+              ← Back to Dashboard
             </button>
+          </div>
+          <div className="max-w-4xl mx-auto p-6">
+            <div className="text-center space-y-4 mb-8">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {selectedModule.title}
+              </h1>
+              <p className="text-xl text-muted-foreground">{selectedModule.subtitle}</p>
+              <p className="text-muted-foreground max-w-2xl mx-auto">{selectedModule.description}</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="text-center p-6 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{selectedModule.problems.length}</div>
+                <div className="text-sm text-muted-foreground">Practice Problems</div>
+              </div>
+              <div className="text-center p-6 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">~{selectedModule.estimatedTime}h</div>
+                <div className="text-sm text-muted-foreground">Estimated Time</div>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <button 
+                onClick={() => handleProblemClick(selectedModule.problems[0])}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105"
+              >
+                Start First Problem →
+              </button>
+            </div>
           </div>
         </div>
       ) : null;
 
     default:
       return (
-        <div className="min-h-screen bg-background">
-          <div className="border-b p-4">
-            <div className="max-w-6xl mx-auto">
-              <h1 className="text-2xl font-bold">Code Growth Tracker</h1>
-              <p className="text-muted-foreground">Master DSA from Zero to Hero</p>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <div className="border-b bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-10">
+            <div className="max-w-7xl mx-auto p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    CodeMaster DSA
+                  </h1>
+                  <p className="text-muted-foreground">Master Data Structures & Algorithms from Zero to Hero</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div className="text-sm font-medium">Welcome back!</div>
+                    <div className="text-xs text-muted-foreground">
+                      {userProgress.experienceLevel.replace('-', ' ')} level
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                    {userProgress.preferredLanguage.charAt(0).toUpperCase()}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="max-w-6xl mx-auto">
-            <LearningDashboard
-              userProgress={userProgress}
-              modules={modules}
-              onModuleClick={handleModuleClick}
-              onProblemClick={handleProblemClick}
-            />
-          </div>
+          
+          <LearningDashboard
+            userProgress={userProgress}
+            modules={modules}
+            onModuleClick={handleModuleClick}
+            onProblemClick={handleProblemClick}
+          />
         </div>
       );
   }
