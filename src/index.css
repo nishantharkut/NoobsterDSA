@@ -7,101 +7,82 @@
 
 @layer base {
   :root {
-    /* Base theme colors - tech-inspired palette */
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
+    /* Updated color palette for DSA learning platform */
+    --background: 248 250 252;
+    --foreground: 15 23 42;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
 
-    /* Deep blue for primary */
-    --primary: 216 98% 52%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary blue for trust and learning */
+    --primary: 59 130 246;
+    --primary-foreground: 248 250 252;
 
-    /* Teal for secondary */
-    --secondary: 185 84% 47%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary emerald for success and growth */
+    --secondary: 16 185 129;
+    --secondary-foreground: 15 23 42;
 
-    /* Teal accent */
-    --accent: 185 84% 47%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent amber for achievements */
+    --accent: 245 158 11;
+    --accent-foreground: 15 23 42;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Success emerald */
+    --success: 5 150 105;
+    --destructive: 220 38 38;
+    --destructive-foreground: 248 250 252;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 216 98% 52%;
+    --border: 226 232 240;
+    --input: 226 232 240;
+    --ring: 59 130 246;
 
     --radius: 0.5rem;
 
-    /* Status colors */
-    --success: 142 71% 45%;
-    --warning: 48 96% 53%; 
-    --info: 199 89% 48%;
-
-    /* Deep accent colors */
-    --deep-blue: 221 83% 23%;
-    --deep-teal: 185 84% 27%;
-    --teal: 185 84% 47%;
-    --teal-foreground: 210 40% 98%;
-
-    /* Topic Colors */
-    --arrays: 221 83% 53%;
-    --strings: 262 83% 58%;
-    --linkedlist: 340 82% 52%;
-    --trees: 142 71% 45%;
-    --graphs: 16 80% 62%; 
-    --dp: 48 96% 53%;
-    --greedy: 199 89% 48%;
-    --backtracking: 291 64% 42%;
+    /* Learning track colors */
+    --arrays: 59 130 246;
+    --strings: 147 51 234;
+    --linkedlist: 239 68 68;
+    --trees: 34 197 94;
+    --graphs: 249 115 22;
+    --dp: 245 158 11;
+    --sorting: 6 182 212;
+    --algorithms: 168 85 247;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 15 23 42;
+    --foreground: 248 250 252;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 30 41 59;
+    --card-foreground: 248 250 252;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 30 41 59;
+    --popover-foreground: 248 250 252;
 
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 96 165 250;
+    --primary-foreground: 15 23 42;
 
-    --secondary: 185 84% 47%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 52 211 153;
+    --secondary-foreground: 15 23 42;
 
-    --accent: 185 84% 47%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 251 191 36;
+    --accent-foreground: 15 23 42;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 51 65 85;
+    --muted-foreground: 148 163 184;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 34 197 94;
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-
-    /* Status colors - dark mode */
-    --success: 142 71% 35%;
-    --warning: 48 96% 43%; 
-    --info: 199 89% 38%;
-
-    /* Deep accent colors - dark mode */
-    --deep-blue: 221 83% 33%;
-    --deep-teal: 185 84% 37%;
-    --teal: 185 84% 47%;
-    --teal-foreground: 210 40% 98%;
+    --border: 51 65 85;
+    --input: 51 65 85;
+    --ring: 96 165 250;
   }
 }
 
@@ -112,6 +93,7 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -122,15 +104,22 @@
     @apply font-mono;
   }
 
-  .tag-arrays { @apply bg-[hsl(var(--arrays)/0.2)] text-[hsl(var(--arrays))] border-[hsl(var(--arrays)/0.3)]; }
-  .tag-strings { @apply bg-[hsl(var(--strings)/0.2)] text-[hsl(var(--strings))] border-[hsl(var(--strings)/0.3)]; }
-  .tag-linkedlist { @apply bg-[hsl(var(--linkedlist)/0.2)] text-[hsl(var(--linkedlist))] border-[hsl(var(--linkedlist)/0.3)]; }
-  .tag-trees { @apply bg-[hsl(var(--trees)/0.2)] text-[hsl(var(--trees))] border-[hsl(var(--trees)/0.3)]; }
-  .tag-graphs { @apply bg-[hsl(var(--graphs)/0.2)] text-[hsl(var(--graphs))] border-[hsl(var(--graphs)/0.3)]; }
-  .tag-dp { @apply bg-[hsl(var(--dp)/0.2)] text-[hsl(var(--dp))] border-[hsl(var(--dp)/0.3)]; }
-  .tag-greedy { @apply bg-[hsl(var(--greedy)/0.2)] text-[hsl(var(--greedy))] border-[hsl(var(--greedy)/0.3)]; }
-  .tag-backtracking { @apply bg-[hsl(var(--backtracking)/0.2)] text-[hsl(var(--backtracking))] border-[hsl(var(--backtracking)/0.3)]; }
-  
+  /* Learning track theme colors */
+  .track-arrays { @apply bg-blue-50 border-blue-200 text-blue-900; }
+  .track-strings { @apply bg-purple-50 border-purple-200 text-purple-900; }
+  .track-linkedlist { @apply bg-red-50 border-red-200 text-red-900; }
+  .track-trees { @apply bg-green-50 border-green-200 text-green-900; }
+  .track-graphs { @apply bg-orange-50 border-orange-200 text-orange-900; }
+  .track-dp { @apply bg-amber-50 border-amber-200 text-amber-900; }
+  .track-sorting { @apply bg-cyan-50 border-cyan-200 text-cyan-900; }
+  .track-algorithms { @apply bg-violet-50 border-violet-200 text-violet-900; }
+
+  /* Difficulty colors */
+  .difficulty-beginner { @apply bg-green-100 text-green-800 border-green-200; }
+  .difficulty-easy { @apply bg-blue-100 text-blue-800 border-blue-200; }
+  .difficulty-medium { @apply bg-yellow-100 text-yellow-800 border-yellow-200; }
+  .difficulty-hard { @apply bg-red-100 text-red-800 border-red-200; }
+
   /* Animation classes */
   .hover-scale {
     @apply transition-transform duration-200 hover:scale-105;
@@ -142,57 +131,50 @@
   
   .hover-glow:hover {
     @apply shadow-lg;
-    box-shadow: 0 0 15px rgba(var(--teal-rgb, 47, 214, 230), 0.5);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
   }
-  
-  /* Zen mode styling */
-  .zen-mode {
-    @apply max-w-2xl mx-auto py-8 px-4;
+
+  /* Code editor specific styles */
+  .code-editor {
+    @apply font-mono text-sm;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   }
-  
-  /* Markdown styling */
-  .markdown-content h1 {
-    @apply text-2xl font-bold mb-4;
+
+  /* Progress indicators */
+  .progress-ring {
+    @apply transition-all duration-500 ease-out;
   }
-  
-  .markdown-content h2 {
-    @apply text-xl font-bold mb-3;
+
+  /* Badge animations */
+  .badge-unlock {
+    animation: badgeUnlock 0.6s ease-out;
   }
-  
-  .markdown-content h3 {
-    @apply text-lg font-bold mb-2;
+
+  @keyframes badgeUnlock {
+    0% {
+      transform: scale(0) rotate(-180deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2) rotate(-90deg);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
   }
-  
-  .markdown-content p {
-    @apply mb-4;
+
+  /* Gradient backgrounds for onboarding */
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
-  
-  .markdown-content ul {
-    @apply list-disc ml-5 mb-4;
+
+  .gradient-bg-alt {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
-  
-  .markdown-content ol {
-    @apply list-decimal ml-5 mb-4;
-  }
-  
-  .markdown-content code {
-    @apply font-code bg-muted px-1 py-0.5 rounded;
-  }
-  
-  .markdown-content pre {
-    @apply font-code bg-muted p-3 rounded mb-4 overflow-x-auto;
-  }
-  
-  /* Responsive utilities */
-  .responsive-grid {
-    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
-  }
-  
-  .responsive-card {
-    @apply p-4 rounded-lg border shadow-sm;
-  }
-  
-  /* Mobile-specific styles */
+
+  /* Responsive utilities for mobile */
   @media (max-width: 767px) {
     .mobile-full-width {
       width: 100% !important;
@@ -200,7 +182,7 @@
     }
     
     .mobile-stack {
-      @apply flex flex-col !important;
+      @apply flex flex-col space-y-4 !important;
     }
     
     .mobile-hidden {
@@ -211,12 +193,54 @@
       @apply text-sm;
     }
     
-    .mobile-text-center {
+    .mobile-center {
       @apply text-center;
     }
-    
+
     .mobile-p-2 {
       @apply p-2;
+    }
+
+    /* Code editor mobile adjustments */
+    .code-editor-mobile {
+      @apply text-xs leading-relaxed;
+    }
+  }
+
+  /* Tablet specific adjustments */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .tablet-grid {
+      @apply grid-cols-2;
+    }
+  }
+
+  /* Desktop enhancements */
+  @media (min-width: 1024px) {
+    .desktop-grid {
+      @apply grid-cols-3;
+    }
+
+    .desktop-sidebar {
+      @apply sticky top-4;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .high-contrast {
+      --border: 0 0 0;
+      --muted: 229 229 229;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .hover-scale {
+      @apply hover:scale-100;
+    }
+    
+    .badge-unlock {
+      animation: none;
     }
   }
 }
